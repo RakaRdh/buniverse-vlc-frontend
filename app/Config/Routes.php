@@ -36,6 +36,9 @@ $routes->get('/live_streaming', 'Home::livestreaming');
 $routes->get('/live_streaming/recommendation_video', 'Home::recommendvideo');
 $routes->get('/programs', 'Home::programs');
 $routes->get('/programs/programs_detail', 'Home::programsdetail');
+$routes->get('/programs/detail/(:any)', 'Home::programsdetail/$1');
+$routes->get('/product/(:any)', 'Home::programsdetail/$1');
+$routes->get('/product', 'Home::programs');
 $routes->get('/anchors', 'Home::anchors');
 $routes->get('/anchors/anchors_detail', 'Home::anchorsdetail');
 
@@ -57,8 +60,12 @@ $routes->post('api/placement','Api::placement');
 $routes->delete('api/placement/(:num)','Api::placementDelete/$1');
 $routes->get('api/(:any)','Api::$1');
 
-$routes->match(['get','post'],'login','Auth::login');
-$routes->get('logout','Auth::logout');
+$routes->get('login', 'Auth::login');
+$routes->get('register', 'Auth::register');
+$routes->post('auth/login', 'Auth::attemptLogin');
+$routes->post('auth/register', 'Auth::attemptRegister');
+$routes->get('logout', 'Auth::logout');
+$routes->match(['get', 'post'], 'programs/enroll/(:num)', 'Home::enroll/$1');
 
 // $routes->get('admins','Admins::index');
 $routes->match(['get','post'],'admins/create','Admins::create');

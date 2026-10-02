@@ -101,22 +101,46 @@ class Home extends BaseController
 		// 	],
 		// ];
 		// $data['headlines'] = $headlines;
-		$data = [
-			'courses' => [
+		// Fetch active courses from DB
+		$programModel = new \App\Models\ProgramModel();
+		$dbPrograms = $programModel->getActivePrograms();
+		$courses = [];
+
+		foreach ($dbPrograms as $p) {
+			$details = $programModel->getProgramWithModules($p['id']);
+			$courses[] = [
+				'id'              => $p['id'],
+				'slug'            => $p['slug'],
+				'image'           => base_url($p['image'] ?: 'img/img-course-1.webp'),
+				'name'            => $p['name'],
+				'title'           => $p['name'],
+				'about'           => $p['short_desc'] ?? $p['description'],
+				'modules_count'   => ($details['modules_count'] ?? 0) . ' modul',
+				'has_video'       => '1 video',
+				'has_certificate' => $p['has_certificate'] ? 'Sertifikat' : '',
+			];
+		}
+
+		if (empty($courses)) {
+			$courses = [
 				[
-					'slug' => "esgrc",
-					'image' => base_url("img/img-course-1.webp"),
-					'name' => "ESGRC (Governance, Risk, and Compliance)",
-					'title' => "ESGRC (Governance, Risk, and Compliance)",
-					'about' => "ESGRC (Governance, Risk, and Compliance)",
-					'modules_count' => "12 modul",
-					'has_video' => "1 video",
+					'id'              => 1,
+					'slug'            => "esgrc",
+					'image'           => base_url("img/img-course-1.webp"),
+					'name'            => "ESGRC (Governance, Risk, and Compliance)",
+					'title'           => "ESGRC (Governance, Risk, and Compliance)",
+					'about'           => "ESGRC (Governance, Risk, and Compliance)",
+					'modules_count'   => "12 modul",
+					'has_video'       => "1 video",
 					'has_certificate' => "Sertifikat"
 				],
-			],
+			];
+		}
+
+		$data = [
+			'courses' => $courses,
 			'faqs' => [],
 		];
-		// dd($data);
 		return view('home', $data);
 	}
 
@@ -127,32 +151,72 @@ class Home extends BaseController
 
 	public function livestreaming()
 	{
-		$jadwal_program = json_decode(file_get_contents('http://10.0.5.209/v4/tv/type:schedule'));
-		$rekomen_video = json_decode(file_get_contents('http://10.0.5.209/v4/article/type:bytag/tag:video-jalan-dakwah-btv/start:0/limit:8'));
-		// dd($rekomen_video->result);
-		return view('live_streaming', ['jadwal_programs' => $jadwal_program->result->btv, 'rekomen_videos' => $rekomen_video->result]);
+		return view('live_streaming', ['jadwal_programs' => [], 'rekomen_videos' => []]);
 	}
 
 	public function recommendvideo()
 	{
-		$jadwal_program = json_decode(file_get_contents('http://10.0.5.209/v4/tv/type:schedule'));
-		$rekomen_video = json_decode(file_get_contents('http://10.0.5.209/v4/article/type:bytag/tag:video-jalan-dakwah-btv/start:0/limit:8'));
-		$data['jadwal_programs'] = $jadwal_program->result->btv;
-		$data['rekomen_videos'] = $rekomen_video->result;
-		// dd($data);
-		return view('recommendation_video', $data);
+		return view('recommendation_video', ['jadwal_programs' => [], 'rekomen_videos' => []]);
 	}
 
 	public function programs()
 	{
-		return view('programs');
+		$programModel = new \App\Models\ProgramModel();
+		$programs = $programModel->getActivePrograms();
+		return view('programs', ['programs' => $programs]);
 	}
 
-	public function programsdetail()
+	public function programsdetail($slugOrId = null)
 	{
-		$rekomen_video = json_decode(file_get_contents('http://10.0.5.209/v4/article/type:bytag/tag:video-jalan-dakwah-btv/start:0/limit:8'));
-		$data['rekomen_videos'] = $rekomen_video->result;
+		$slug = $slugOrId ?? $this->request->getGet('slug') ?? $this->request->getGet('id') ?? 'esgrc';
+		
+		$programModel = new \App\Models\ProgramModel();
+		$program = $programModel->getProgramWithModules($slug);
+
+		if (!$program) {
+			// Fallback to first available program
+			$first = $programModel->first();
+			if ($first) {
+				$program = $programModel->getProgramWithModules($first['id']);
+			}
+		}
+
+		$isEnrolled = false;
+		$memberId = session('member_id');
+		if ($memberId && $program) {
+			$enrollmentModel = new \App\Models\EnrollmentModel();
+			$isEnrolled = $enrollmentModel->isEnrolled($memberId, $program['id']);
+		}
+
+		$data = [
+			'program'    => $program,
+			'isEnrolled' => $isEnrolled,
+			'memberId'   => $memberId,
+		];
+
 		return view('programs_detail', $data);
+	}
+
+	public function enroll($programId = null)
+	{
+		$programId = $programId ?? $this->request->getPost('program_id');
+		$memberId = session('member_id');
+
+		if (!$memberId) {
+			return redirect()->to('/register?program_id=' . $programId)
+							 ->with('info', 'Silakan masuk atau daftar terlebih dahulu untuk mendaftar kelas ini.');
+		}
+
+		$enrollmentModel = new \App\Models\EnrollmentModel();
+		if ($enrollmentModel->isEnrolled($memberId, $programId)) {
+			return redirect()->to('/programs/programs_detail?id=' . $programId)
+							 ->with('info', 'Anda sudah terdaftar di kelas ini.');
+		}
+
+		$enrollmentModel->enrollMember($memberId, $programId);
+
+		return redirect()->to('/programs/programs_detail?id=' . $programId)
+						 ->with('success', 'Selamat! Pendaftaran Anda di kelas ini telah berhasil.');
 	}
 
 	public function anchors()
@@ -169,7 +233,4 @@ class Home extends BaseController
 	{
 		return view('ids');
 	}
-
-	//--------------------------------------------------------------------
-
 }
