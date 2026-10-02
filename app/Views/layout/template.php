@@ -28,7 +28,6 @@
     </script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
-        .hero-wave { clip-path: ellipse(75% 100% at 50% 0%); }
     </style>
 </head>
 <body class="text-gray-800 bg-white">

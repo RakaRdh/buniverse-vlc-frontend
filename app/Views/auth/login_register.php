@@ -2,160 +2,191 @@
 
 <?= $this->section('content'); ?>
 
-<!-- Hero Top Curved Banner -->
-<div class="relative w-full bg-[#C41E24] text-white pt-10 pb-16 px-4 hero-wave overflow-hidden">
-    <div class="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-    
-    <div class="max-w-[1440px] mx-auto text-center relative z-10">
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide">
-            <?= !empty($program) ? 'Daftar Kelas' : 'LOGIN / SIGN IN' ?>
-        </h1>
-    </div>
+<!-- Hero Top Curved Banner using header-bg.webp -->
+<div class="relative w-full bg-[url('/img/header-bg.webp')] bg-cover bg-no-repeat bg-bottom h-[140px] sm:h-[180px] lg:h-[220px] flex items-center justify-center overflow-hidden">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide text-white drop-shadow-sm">
+        <?= !empty($program) ? 'Daftar kelas' : 'LOGIN / SIGN IN' ?>
+    </h1>
 </div>
 
-<div class="max-w-2xl mx-auto px-4 py-8 -mt-6">
-    <!-- Optional Program Information Card (When enrolling from a course) -->
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <!-- Program Details Section (matching Gambar 2 & Gambar 3) -->
     <?php if (!empty($program)): ?>
-        <div class="text-center mb-10">
+        <div class="text-center mb-8">
+            <!-- Logo Vocational Learning Center -->
             <div class="flex justify-center mb-4">
-                <img src="/img/logo-vocational.webp" alt="Logo VLC" class="h-10 object-contain">
+                <img src="/img/logo-vocational.webp" alt="Datasatu Vocational Learning Center" class="h-10 object-contain">
             </div>
 
-            <!-- Divider with shield icon -->
-            <div class="relative flex py-4 items-center">
+            <!-- Divider with logo-vlc-white.webp (Gambar 4) -->
+            <div class="relative flex py-6 items-center max-w-xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink mx-4 text-slate-300">
-                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z" />
-                    </svg>
+                <span class="flex-shrink mx-4">
+                    <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
                 </span>
                 <div class="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
+            <!-- Title & Short Description -->
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3 px-2">
                 <?= esc($program['name']) ?>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed mb-6">
+            <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed mb-6 px-4">
                 <?= esc($program['short_desc'] ?? $program['description']) ?>
             </p>
 
-            <div class="rounded-xl overflow-hidden shadow-lg border border-slate-100 max-w-lg mx-auto">
-                <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover max-h-64">
+            <!-- Course Banner Image -->
+            <div class="rounded-xl overflow-hidden shadow-md border border-slate-100 max-w-xl mx-auto mb-6">
+                <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover">
             </div>
 
-            <!-- Divider with shield icon -->
-            <div class="relative flex py-6 items-center">
+            <!-- Second Divider with logo-vlc-white.webp (Gambar 4) -->
+            <div class="relative flex py-6 items-center max-w-xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink mx-4 text-slate-300">
-                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z" />
-                    </svg>
+                <span class="flex-shrink mx-4">
+                    <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
                 </span>
                 <div class="flex-grow border-t border-slate-200"></div>
             </div>
         </div>
     <?php endif; ?>
 
-    <!-- Navigation Tabs (LOGIN | REGISTER) -->
-    <div class="flex border-b border-slate-200 mb-8 max-w-md mx-auto">
-        <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
-                class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'login') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
-            LOGIN
-        </button>
-        <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')"
-                class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'register') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
-            REGISTER
-        </button>
-    </div>
+    <!-- Enrollment State if already logged in -->
+    <?php $isLoggedIn = session()->get('is_logged_in'); ?>
+    <?php if ($isLoggedIn && !empty($program)): ?>
+        <?php 
+            $enrollmentModel = new \App\Models\EnrollmentModel();
+            $alreadyEnrolled = $enrollmentModel->isEnrolled(session('member_id'), $program['id']);
+        ?>
 
-    <!-- LOGIN FORM -->
-    <div id="loginFormContainer" class="<?= ($active_tab === 'login') ? 'block' : 'hidden' ?> max-w-lg mx-auto">
-        <form action="/auth/login" method="POST" class="space-y-5">
-            <?= csrf_field() ?>
-            <input type="hidden" name="redirect" value="<?= esc($redirect ?? '') ?>">
-            <input type="hidden" name="program_id" value="<?= esc($program_id ?? '') ?>">
-
-            <div>
-                <label for="login_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
-                <input type="email" id="login_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                       placeholder="Isi Email anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+        <?php if ($alreadyEnrolled): ?>
+            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
+                <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
+                    <svg class="size-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="text-base font-bold text-emerald-900">Anda Sudah Terdaftar di Kelas Ini</h3>
+                <p class="text-xs text-emerald-700 mt-1">Status: Terdaftar sebagai peserta aktif.</p>
+                <div class="mt-4">
+                    <a href="/#courses" class="inline-block text-xs font-semibold text-emerald-800 hover:underline">
+                        &larr; Lihat Kelas Lainnya
+                    </a>
+                </div>
             </div>
-
-            <div>
-                <label for="login_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                <input type="password" id="login_password" name="password" required
-                       placeholder="Isi Password anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+        <?php else: ?>
+            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
+                <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-4">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
+                        Daftar Kelas Ini Sekarang
+                    </button>
+                </form>
             </div>
+        <?php endif; ?>
 
-            <div class="pt-4 text-center">
-                <button type="submit"
-                        class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                    Submit
-                </button>
-            </div>
-        </form>
-    </div>
+    <?php else: ?>
 
-    <!-- REGISTER FORM -->
-    <div id="registerFormContainer" class="<?= ($active_tab === 'register') ? 'block' : 'hidden' ?> max-w-lg mx-auto">
-        <form action="/auth/register" method="POST" class="space-y-4">
-            <?= csrf_field() ?>
-            <input type="hidden" name="redirect" value="<?= esc($redirect ?? '') ?>">
-            <input type="hidden" name="program_id" value="<?= esc($program_id ?? '') ?>">
+        <!-- Tabs (LOGIN | REGISTER) matching Gambar 3 -->
+        <div class="flex border-b border-slate-200 mb-8 max-w-md mx-auto">
+            <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
+                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'login') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
+                LOGIN
+            </button>
+            <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')"
+                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'register') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
+                REGISTER
+            </button>
+        </div>
 
-            <div>
-                <label for="reg_fullname" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama* :</label>
-                <input type="text" id="reg_fullname" name="fullname" value="<?= esc(old('fullname') ?? '') ?>" required
-                       placeholder="Isi nama anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-            </div>
+        <!-- LOGIN FORM -->
+        <div id="loginFormContainer" class="<?= ($active_tab === 'login') ? 'block' : 'hidden' ?> max-w-lg mx-auto">
+            <form action="/auth/login" method="POST" class="space-y-5">
+                <?= csrf_field() ?>
+                <input type="hidden" name="redirect" value="<?= esc($redirect ?? '') ?>">
+                <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? $program_id ?? '') ?>">
 
-            <div>
-                <label for="reg_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
-                <input type="email" id="reg_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                       placeholder="Isi Email anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-            </div>
+                <div>
+                    <label for="login_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
+                    <input type="email" id="login_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
+                           placeholder="Isi Email anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
 
-            <div>
-                <label for="reg_phone" class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp* :</label>
-                <input type="text" id="reg_phone" name="phone" value="<?= esc(old('phone') ?? '') ?>" required
-                       placeholder="Isi No Telp anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-            </div>
+                <div>
+                    <label for="login_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
+                    <input type="password" id="login_password" name="password" required
+                           placeholder="Isi Password anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
 
-            <div>
-                <label for="reg_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                <input type="password" id="reg_password" name="password" required minlength="6"
-                       placeholder="Isi Password anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-            </div>
+                <div class="pt-4 text-center">
+                    <button type="submit"
+                            class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
 
-            <div>
-                <label for="reg_password_confirm" class="block text-xs font-semibold text-slate-700 mb-1.5">Ulangi Password * :</label>
-                <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
-                       placeholder="Ulangi Isi Password anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-            </div>
+        <!-- REGISTER FORM -->
+        <div id="registerFormContainer" class="<?= ($active_tab === 'register') ? 'block' : 'hidden' ?> max-w-lg mx-auto">
+            <form action="/auth/register" method="POST" class="space-y-4">
+                <?= csrf_field() ?>
+                <input type="hidden" name="redirect" value="<?= esc($redirect ?? '') ?>">
+                <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? $program_id ?? '') ?>">
 
-            <div class="flex items-start gap-2 pt-2 px-1">
-                <input type="checkbox" id="reg_terms" name="terms" value="1" required
-                       class="mt-1 rounded border-slate-300 text-[#C41E24] focus:ring-[#C41E24]">
-                <label for="reg_terms" class="text-[11px] text-slate-500 leading-snug cursor-pointer">
-                    Dengan mengklik button di bawah anda berarti setuju dan tunduk terhadap aturan yang telah di tetapkan datasatu vocational learning center
-                </label>
-            </div>
+                <div>
+                    <label for="reg_fullname" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama* :</label>
+                    <input type="text" id="reg_fullname" name="fullname" value="<?= esc(old('fullname') ?? '') ?>" required
+                           placeholder="Isi nama anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
 
-            <div class="pt-4 text-center">
-                <button type="submit"
-                        class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                    Submit
-                </button>
-            </div>
-        </form>
-    </div>
+                <div>
+                    <label for="reg_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
+                    <input type="email" id="reg_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
+                           placeholder="Isi Email anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
+
+                <div>
+                    <label for="reg_phone" class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp* :</label>
+                    <input type="text" id="reg_phone" name="phone" value="<?= esc(old('phone') ?? '') ?>" required
+                           placeholder="Isi No Telp anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
+
+                <div>
+                    <label for="reg_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
+                    <input type="password" id="reg_password" name="password" required minlength="6"
+                           placeholder="Isi Password anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
+
+                <div>
+                    <label for="reg_password_confirm" class="block text-xs font-semibold text-slate-700 mb-1.5">Ulangi Password * :</label>
+                    <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
+                           placeholder="Ulangi Isi Password anda"
+                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                </div>
+
+                <div class="flex items-start gap-2 pt-2 px-1">
+                    <input type="checkbox" id="reg_terms" name="terms" value="1" required
+                           class="mt-1 rounded border-slate-300 text-[#C41E24] focus:ring-[#C41E24]">
+                    <label for="reg_terms" class="text-[11px] text-slate-500 leading-snug cursor-pointer">
+                        Dengan mengklik button di bawah anda berarti setuju dan tunduk terhadap aturan yang telah di tetapkan datasatu vocational learning center
+                    </label>
+                </div>
+
+                <div class="pt-4 text-center">
+                    <button type="submit"
+                            class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -164,6 +195,8 @@
         const registerContainer = document.getElementById('registerFormContainer');
         const btnLogin = document.getElementById('tabBtnLogin');
         const btnRegister = document.getElementById('tabBtnRegister');
+
+        if (!loginContainer || !registerContainer) return;
 
         if (tab === 'login') {
             loginContainer.classList.remove('hidden');

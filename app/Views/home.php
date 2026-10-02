@@ -112,47 +112,51 @@
 </section>
 
 <!-- COURSES -->
-<section class="relative bg-brand py-16 text-white text-center overflow-hidden max-h-[1100px] h-[1100px] flex flex-col justify-center">
+<section class="relative bg-brand py-16 lg:py-24 text-white text-center overflow-hidden min-h-[600px] flex flex-col justify-center" id="courses">
     <div class="absolute inset-0 bg-brand">
         <img src="/img/course-bg.webp" alt=""
              class="w-full h-full object-cover object-top sm:object-center lg:object-cover"
              onerror="this.style.display='none'">
     </div>
-    <div class="relative max-w-[1000px] mx-auto px-4 z-10">
-        <div class="min-h-[220px] lg:min-h-[260px] flex flex-col justify-center">
-            <h2 class="text-2xl font-bold mb-3">Pilih Kelas Sesuai Minat dan Kebutuhanmu</h2>
-            <p class="text-white/90 max-w-2xl mx-auto">
+    <div class="relative max-w-[1200px] mx-auto px-4 z-10 w-full">
+        <div class="max-w-2xl mx-auto mb-10">
+            <h2 class="text-2xl lg:text-3xl font-bold mb-3">Pilih Kelas Sesuai Minat dan Kebutuhanmu</h2>
+            <p class="text-white/90 text-sm leading-relaxed">
                 Temukan berbagai pilihan pelatihan dengan topik yang relevan dan aplikatif. Setiap bulan, tersedia kelas dengan beragam tema yang dapat kamu pilih sesuai kebutuhan pengembangan diri dan karier. Pelatihan dapat diikuti secara fleksibel, baik <strong>offline maupun online melalui format hybrid.</strong>
             </p>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-6 mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center items-stretch">
             <?php if (empty($courses)): ?>
-                <p class="text-white/80 text-sm">Belum ada kelas tersedia saat ini.</p>
+                <p class="text-white/80 text-sm col-span-full">Belum ada kelas tersedia saat ini.</p>
             <?php endif; ?>
             <?php foreach ($courses as $course): ?>
-                <div class="bg-white text-gray-800 rounded-xl overflow-hidden text-left shadow-lg max-w-[434px] w-full max-h-[434px] h-full ">
-                    <div class="h-40 bg-gray-200 relative overflow-hidden">
-                        <img src="<?= esc($course['image'] ?? '/img/course-placeholder.webp') ?>" alt="<?= esc($course['title']) ?>"
-                             class="w-full h-full object-cover" onerror="this.style.display='none'">
-                        <img src="/img/logo-vlc.webp" alt=""
-                             class="absolute inset-0 m-auto w-16 h-16 object-contain" onerror="this.style.display='none'">
-                        <?php if (!empty($course['is_best_seller'])): ?>
-                            <span class="absolute top-3 right-3 bg-[#F2836E] text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow">Best Seller</span>
-                        <?php endif; ?>
+                <div class="bg-white text-gray-800 rounded-xl overflow-hidden text-left shadow-lg w-full flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 bg-gray-200 relative overflow-hidden">
+                            <img src="<?= esc($course['image'] ?? '/img/course-placeholder.webp') ?>" alt="<?= esc($course['title']) ?>"
+                                 class="w-full h-full object-cover" onerror="this.style.display='none'">
+                            <img src="/img/logo-vlc.webp" alt=""
+                                 class="absolute inset-0 m-auto w-16 h-16 object-contain" onerror="this.style.display='none'">
+                            <?php if (!empty($course['is_best_seller'])): ?>
+                                <span class="absolute top-3 right-3 bg-[#F2836E] text-white text-xs font-semibold px-3 py-1 rounded-full shadow">Best Seller</span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="p-5 pb-4">
+                            <h3 class="font-bold text-base mb-2 text-slate-900"><?= esc($course['title']) ?></h3>
+                            <ul class="text-xs text-gray-600 space-y-1.5 mb-4 list-disc list-inside">
+                                <li><?= (int) $course['modules_count'] ?> modul</li>
+                                <?php if (!empty($course['has_video'])): ?><li>1 video</li><?php endif; ?>
+                                <?php if (!empty($course['has_certificate'])): ?><li>Sertifikat</li><?php endif; ?>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="p-5 pb-4">
-                        <h3 class="font-bold mb-2"><?= esc($course['title']) ?></h3>
-                        <ul class="text-sm text-gray-600 space-y-1 mb-4 list-disc list-inside">
-                            <li><?= (int) $course['modules_count'] ?> modul</li>
-                            <?php if (!empty($course['has_video'])): ?><li>1 video</li><?php endif; ?>
-                            <?php if (!empty($course['has_certificate'])): ?><li>Sertifikat</li><?php endif; ?>
-                        </ul>
+                    <div class="p-5 pt-0">
+                        <a href="/product/<?= esc($course['slug']) ?>"
+                           class="block w-full text-center bg-[#FF8D28] hover:bg-[#e07212] text-white font-semibold py-3 rounded-lg shadow-sm transition">
+                           Daftar Kelas
+                        </a>
                     </div>
-                    <a href="/product/<?= esc($course['slug']) ?>"
-                       class="block text-center bg-[#FF8D28] hover:bg-accent-dark text-white font-semibold py-3.5 transition">
-                       Daftar Kelas
-                    </a>
                 </div>
             <?php endforeach; ?>
         </div>
