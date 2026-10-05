@@ -1,108 +1,16 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\ProgramModel;
+use App\Models\GalleryModel;
+use App\Models\FaqModel;
+
 class Home extends BaseController
 {
 	public function index()
 	{
-		// $jadwal_program = json_decode(file_get_contents('http://10.0.5.209/v4/tv/type:schedule'));
-		// // dd($jadwal_program->result->btv);
-		// $btv = $jadwal_program->result->btv;          // lebih singkat
-		// $jumlah = count($btv);                        // biasanya 7
-
-		// // 2. Cari indeks “hari ini”
-		// $today = strtolower(date('l'));
-
-		// $indeks = array_search(
-		// 	$today,
-		// 	array_map(fn($h) => strtolower($h->day), $btv),
-		// 	true
-		// );
-
-		// if ($indeks === false) {
-		// 	throw new RuntimeException('Hari ini tidak ada di array jadwal.');
-		// }
-
-		// // Tentukan array hasil sesuai aturan
-		// if ($indeks === 0) {
-		// 	$start_index = 0;
-		// 	$hasil = array_slice($btv, 0, min(3, $jumlah));
-		// } elseif ($indeks === $jumlah - 1) {
-		// 	$start_index = max(0, $jumlah - 3);
-		// 	$hasil = array_slice($btv, $start_index, 3);
-		// } else {
-		// 	$start_index = $indeks - 1;
-		// 	$hasil = array_slice($btv, $start_index, 3);
-		// }
-
-		// // Mapping bulan bahasa Indonesia
-		// $bulan_indonesia = [
-		// 	'January' => 'Januari',
-		// 	'February' => 'Februari',
-		// 	'March' => 'Maret',
-		// 	'April' => 'April',
-		// 	'May' => 'Mei',
-		// 	'June' => 'Juni',
-		// 	'July' => 'Juli',
-		// 	'August' => 'Agustus',
-		// 	'September' => 'September',
-		// 	'October' => 'Oktober',
-		// 	'November' => 'November',
-		// 	'December' => 'Desember',
-		// ];
-
-		// // Tambahkan tanggal dan bulan
-		// $tanggal_awal = new \DateTime();
-
-		// if ($start_index < $indeks) {
-		// 	$tanggal_awal->modify('-' . ($indeks - $start_index) . ' days');
-		// } elseif ($start_index > $indeks) {
-		// 	$tanggal_awal->modify('+' . ($start_index - $indeks) . ' days');
-		// }
-
-		// foreach ($hasil as $i => $item) {
-		// 	$tanggal = clone $tanggal_awal;
-		// 	$tanggal->modify("+$i days");
-
-		// 	$nama_bulan = $tanggal->format('F');
-		// 	$item->tanggal = $tanggal->format('d');
-		// 	$item->bulan = $bulan_indonesia[$nama_bulan] ?? $nama_bulan;
-		// }
-		// $data['jadwal_programs'] = $jadwal_program->result->btv;
-		// $data['date_programs'] = $hasil;
-
-		// $headlines = [
-		// 	[
-		// 		'id' => 1,
-		// 		'slug' => 'jalan-dakwah',
-		// 		'name' => 'Jalan Dakwah',
-		// 		'description' => 'Program Jalan Dakwah adalah sebuah tayangan di BTV yang mengupas berbagai topik inspiratif dan edukatif terkait ajaran Islam.',
-		// 		'day' => 'Setiap Hari',
-		// 		'time' => '07.30 & 14.45',
-		// 		'image' => '/img/home-jalan-dakwah.webp',
-		// 	],
-		// 	[
-		// 		'id' => 2,
-		// 		'slug' => 'kuyliner',
-		// 		'name' => 'Kuyliner',
-		// 		'description' => 'Menjelajahi berbagai tempat kuliner, mulai dari makanan populer hingga jajanan unik dan viral.',
-		// 		'day' => 'Setiap Hari',
-		// 		'time' => '15.00',
-		// 		'image' => '/img/home-kuyliner.webp',
-		// 	],
-		// 	[
-		// 		'id' => 3,
-		// 		'slug' => 'dunia-binatang',
-		// 		'name' => 'Dunia Binatang',
-		// 		'description' => 'Menampilkan fakta-fakta unik dan menarik seputar dunia satwa dari berbagai negara.',
-		// 		'day' => 'Setiap Hari',
-		// 		'time' => '17.00',
-		// 		'image' => '/img/home-dunia-binatang.webp',
-		// 	],
-		// ];
-		// $data['headlines'] = $headlines;
-		// Fetch active courses from DB
-		$programModel = new \App\Models\ProgramModel();
+		// Fetch active courses from DB (max 3 for centered display)
+		$programModel = new ProgramModel();
 		$dbPrograms = $programModel->getActivePrograms();
 		$courses = [];
 
@@ -115,6 +23,7 @@ class Home extends BaseController
 				'name'            => $p['name'],
 				'title'           => $p['name'],
 				'about'           => $p['short_desc'] ?? $p['description'],
+				'duration'        => $p['duration'] ?? '3 Hari',
 				'modules_count'   => ($details['modules_count'] ?? 0) . ' modul',
 				'has_video'       => '1 video',
 				'has_certificate' => $p['has_certificate'] ? 'Sertifikat' : '',
@@ -129,108 +38,108 @@ class Home extends BaseController
 					'image'           => base_url("img/img-course-1.webp"),
 					'name'            => "ESGRC (Governance, Risk, and Compliance)",
 					'title'           => "ESGRC (Governance, Risk, and Compliance)",
-					'about'           => "ESGRC (Governance, Risk, and Compliance)",
-					'modules_count'   => "12 modul",
+					'about'           => "Pelatihan komprehensif tata kelola, risiko, dan kepatuhan ESG.",
+					'duration'        => "3 Hari",
+					'modules_count'   => "4 modul",
 					'has_video'       => "1 video",
 					'has_certificate' => "Sertifikat"
 				],
 			];
 		}
 
+		// Limit courses to max 3 as requested
+		$courses = array_slice($courses, 0, 3);
+
+		// Fetch dynamic gallery from DB
+		$galleryModel = new GalleryModel();
+		$galleries = $galleryModel->getActiveGalleries();
+		if (empty($galleries)) {
+			$galleries = [
+				['image' => '/img/gallery-1.webp', 'title' => 'Gallery 1'],
+				['image' => '/img/gallery-2.webp', 'title' => 'Gallery 2'],
+				['image' => '/img/gallery-3.webp', 'title' => 'Gallery 3'],
+			];
+		}
+
+		// Fetch dynamic FAQ from DB
+		$faqModel = new FaqModel();
+		$faqs = $faqModel->getActiveFaqs();
+		if (empty($faqs)) {
+			$faqs = [
+				['question' => 'Berapa lama training akan berlangsung?', 'answer' => 'Durasi training bervariasi tergantung modul, umumnya berlangsung antara 2 sampai 4 minggu secara hybrid.'],
+				['question' => 'Berapa orang yang menjadi peserta dalam satu kelas?', 'answer' => 'Setiap kelas dibatasi maksimal 30 peserta agar pembelajaran lebih efektif dan interaktif.'],
+				['question' => 'Bagaimana cara pembayaran untuk mengikuti training?', 'answer' => 'Pembayaran dapat dilakukan melalui transfer bank setelah pendaftaran kelas disetujui oleh tim kami.'],
+			];
+		}
+
 		$data = [
-			'courses' => $courses,
-			'faqs' => [],
+			'courses'   => $courses,
+			'galleries' => $galleries,
+			'faqs'      => $faqs,
+			'title'     => 'Vocational Learning Center — DataSatu'
 		];
+
 		return view('home', $data);
 	}
 
 	public function aboutus()
 	{
-		return view('about_us');
-	}
-
-	public function livestreaming()
-	{
-		return view('live_streaming', ['jadwal_programs' => [], 'rekomen_videos' => []]);
-	}
-
-	public function recommendvideo()
-	{
-		return view('recommendation_video', ['jadwal_programs' => [], 'rekomen_videos' => []]);
+		return view('about_us', [
+			'title' => 'About Us — DataSatu VLC'
+		]);
 	}
 
 	public function programs()
 	{
-		$programModel = new \App\Models\ProgramModel();
+		$programModel = new ProgramModel();
 		$programs = $programModel->getActivePrograms();
-		return view('programs', ['programs' => $programs]);
+
+		return view('programs', [
+			'programs' => $programs,
+			'title'    => 'Program Pelatihan — DataSatu VLC'
+		]);
 	}
 
-	public function programsdetail($slugOrId = null)
+	public function programsdetail($identifier = null)
 	{
-		$slug = $slugOrId ?? $this->request->getGet('slug') ?? $this->request->getGet('id') ?? 'esgrc';
+		$programModel = new ProgramModel();
 		
-		$programModel = new \App\Models\ProgramModel();
-		$program = $programModel->getProgramWithModules($slug);
+		$programId = $this->request->getGet('id');
+		$program = null;
+
+		if (!empty($identifier)) {
+			if (is_numeric($identifier)) {
+				$program = $programModel->getProgramWithModules((int)$identifier);
+			} else {
+				$program = $programModel->getProgramBySlug($identifier);
+			}
+		} elseif (!empty($programId)) {
+			$program = $programModel->getProgramWithModules((int)$programId);
+		}
 
 		if (!$program) {
-			// Fallback to first available program
-			$first = $programModel->first();
+			$first = $programModel->where('status', 'active')->first();
 			if ($first) {
 				$program = $programModel->getProgramWithModules($first['id']);
 			}
 		}
 
-		$isEnrolled = false;
-		$memberId = session('member_id');
-		if ($memberId && $program) {
-			$enrollmentModel = new \App\Models\EnrollmentModel();
-			$isEnrolled = $enrollmentModel->isEnrolled($memberId, $program['id']);
-		}
-
-		$data = [
-			'program'    => $program,
-			'isEnrolled' => $isEnrolled,
-			'memberId'   => $memberId,
-		];
-
-		return view('programs_detail', $data);
+		return view('programs_detail', [
+			'program' => $program,
+			'title'   => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
+		]);
 	}
 
 	public function enroll($programId = null)
 	{
-		$programId = $programId ?? $this->request->getPost('program_id');
 		$memberId = session('member_id');
-
 		if (!$memberId) {
-			return redirect()->to('/register?program_id=' . $programId)
-							 ->with('info', 'Silakan masuk atau daftar terlebih dahulu untuk mendaftar kelas ini.');
+			return redirect()->to('/login?redirect=' . urlencode('/programs/programs_detail?id=' . $programId))->with('error', 'Silakan masuk atau buat akun untuk mendaftar kelas.');
 		}
 
 		$enrollmentModel = new \App\Models\EnrollmentModel();
-		if ($enrollmentModel->isEnrolled($memberId, $programId)) {
-			return redirect()->to('/programs/programs_detail?id=' . $programId)
-							 ->with('info', 'Anda sudah terdaftar di kelas ini.');
-		}
+		$enrolled = $enrollmentModel->enrollMember($memberId, $programId);
 
-		$enrollmentModel->enrollMember($memberId, $programId);
-
-		return redirect()->to('/programs/programs_detail?id=' . $programId)
-						 ->with('success', 'Selamat! Pendaftaran Anda di kelas ini telah berhasil.');
-	}
-
-	public function anchors()
-	{
-		return view('anchors');
-	}
-
-	public function anchorsdetail()
-	{
-		return view('anchors_detail');
-	}
-
-	public function ids()
-	{
-		return view('ids');
+		return redirect()->to('/programs/programs_detail?id=' . $programId)->with('success', 'Pendaftaran kelas berhasil!');
 	}
 }

@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'DataSatu.com | Vocational Learning Center' ?></title>
+    
+    <!-- Google Fonts: Nunito Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300..900;1,6..12,300..900&display=swap" rel="stylesheet">
+    
+    <!-- Full Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { poppins: ['Poppins', 'sans-serif'] },
+                    fontFamily: { 
+                        sans: ['"Nunito Sans"', 'sans-serif'],
+                        nunito: ['"Nunito Sans"', 'sans-serif'],
+                        poppins: ['"Nunito Sans"', 'sans-serif']
+                    },
                     colors: {
                         brand: {
                             DEFAULT: '#C41E24',
@@ -27,28 +37,17 @@
         }
     </script>
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        html {
+            scroll-behavior: smooth;
+        }
+        body, * { 
+            font-family: 'Nunito Sans', sans-serif !important; 
+        }
     </style>
 </head>
-<body class="text-gray-800 bg-white">
+<body class="text-gray-800 bg-white antialiased selection:bg-brand selection:text-white">
 
     <?= $this->include('layout/header') ?>
-
-    <?php $flashSuccess = session()->getFlashdata('success'); $flashError = session()->getFlashdata('error'); ?>
-    <?php if ($flashSuccess || $flashError): ?>
-        <div class="max-w-3xl mx-auto mt-4 px-4">
-            <?php if ($flashSuccess): ?>
-                <div class="bg-green-100 border border-green-300 text-green-800 text-sm rounded-lg px-4 py-3">
-                    <?= esc($flashSuccess) ?>
-                </div>
-            <?php endif; ?>
-            <?php if ($flashError): ?>
-                <div class="bg-red-100 border border-red-300 text-red-800 text-sm rounded-lg px-4 py-3">
-                    <?= esc($flashError) ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
 
     <main>
         <?= $this->renderSection('content') ?>

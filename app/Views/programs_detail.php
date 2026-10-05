@@ -2,15 +2,18 @@
 
 <?= $this->section('content'); ?>
 
-<!-- Hero Top Curved Banner using header-bg.webp -->
-<div class="relative w-full bg-[url('/img/header-bg.webp')] bg-cover bg-no-repeat bg-bottom h-[140px] sm:h-[180px] lg:h-[220px] flex items-center justify-center overflow-hidden">
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide text-white drop-shadow-sm">
-        Daftar kelas
-    </h1>
-</div>
+<!-- Hero Top Curved Banner using header-bg.webp (Clean title case, seamless top start) -->
+<section class="relative w-full bg-[#C41E24] bg-[url('/img/header-bg.webp')] bg-cover bg-center bg-no-repeat py-12 sm:py-16 text-center text-white overflow-hidden shadow-xs">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight drop-shadow-xs">
+            Daftar Kelas Pelatihan
+        </h1>
+        <p class="text-xs sm:text-sm text-white/90 mt-1.5 font-medium">Lengkapi data diri Anda untuk mengikuti program pelatihan berkualitas.</p>
+    </div>
+</section>
 
-<div class="max-w-2xl mx-auto px-4 py-8">
-    <!-- Program Details Section (matching Gambar 2 & Gambar 3) -->
+<div class="max-w-4xl mx-auto px-4 py-8 lg:py-12">
+    <!-- Program Details Section -->
     <?php if (!empty($program)): ?>
         <div class="text-center mb-8">
             <!-- Logo Vocational Learning Center -->
@@ -19,7 +22,7 @@
             </div>
 
             <!-- Divider with logo-vlc-white.webp (Gambar 4) -->
-            <div class="relative flex py-6 items-center max-w-xl mx-auto">
+            <div class="relative flex py-4 items-center max-w-2xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
                     <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
@@ -28,20 +31,20 @@
             </div>
 
             <!-- Title & Short Description -->
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3 px-2">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-3 px-2">
                 <?= esc($program['name']) ?>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed mb-6 px-4">
+            <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 px-4">
                 <?= esc($program['short_desc'] ?? $program['description']) ?>
             </p>
 
             <!-- Course Banner Image -->
-            <div class="rounded-xl overflow-hidden shadow-md border border-slate-100 max-w-xl mx-auto mb-6">
+            <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 max-w-2xl mx-auto mb-6">
                 <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover">
             </div>
 
             <!-- Second Divider with logo-vlc-white.webp (Gambar 4) -->
-            <div class="relative flex py-6 items-center max-w-xl mx-auto">
+            <div class="relative flex py-4 items-center max-w-2xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
                     <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
@@ -60,13 +63,13 @@
         ?>
 
         <?php if ($alreadyEnrolled): ?>
-            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
+            <div class="max-w-xl mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
                 <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
                     <svg class="size-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                 </div>
                 <h3 class="text-base font-bold text-emerald-900">Anda Sudah Terdaftar di Kelas Ini</h3>
                 <p class="text-xs text-emerald-700 mt-1">Status: Terdaftar sebagai peserta aktif.</p>
-                <div class="mt-4 flex items-center justify-center gap-4">
+                <div class="mt-5 flex items-center justify-center gap-4">
                     <a href="/profile" class="inline-block text-xs font-bold text-[#C41E24] hover:underline">
                         Lihat Status di Profil &rarr;
                     </a>
@@ -77,11 +80,11 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+            <div class="max-w-xl mx-auto my-8 p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
                 <p class="text-xs text-slate-500">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
-                <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-4">
+                <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-5">
                     <?= csrf_field() ?>
-                    <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
+                    <button type="submit" class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
                         Daftar Kelas Ini Sekarang
                     </button>
                 </form>
@@ -91,38 +94,38 @@
     <?php else: ?>
 
         <!-- Tabs (LOGIN | REGISTER) matching Gambar 3 -->
-        <div class="flex border-b border-slate-200 mb-8 max-w-md mx-auto">
+        <div class="flex border-b border-slate-200 mb-8 max-w-xl mx-auto">
             <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
-                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600">
-                LOGIN
+                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600">
+                Login
             </button>
             <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')"
-                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px">
-                REGISTER
+                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px">
+                Daftar Sekarang
             </button>
         </div>
 
-        <!-- LOGIN FORM -->
-        <div id="loginFormContainer" class="hidden max-w-lg mx-auto">
+        <!-- LOGIN FORM (EXPANDED TO MAX-W-XL) -->
+        <div id="loginFormContainer" class="hidden max-w-xl mx-auto">
             <form action="/auth/login" method="POST" class="space-y-5">
                 <?= csrf_field() ?>
                 <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? '') ?>">
 
                 <div>
-                    <label for="login_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
+                    <label for="login_email" class="block text-xs font-bold text-slate-700 mb-1.5">Email * :</label>
                     <input type="email" id="login_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                           placeholder="Isi Email anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                           placeholder="Isi email Anda"
+                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                 </div>
 
                 <div>
-                    <label for="login_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
+                    <label for="login_password" class="block text-xs font-bold text-slate-700 mb-1.5">Password * :</label>
                     <div class="relative">
                         <input type="password" id="login_password" name="password" required
-                               placeholder="Isi Password anda"
-                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                               placeholder="Isi password Anda"
+                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                         <button type="button" onclick="toggleFrontendPassword('login_password', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
                                 title="Tampilkan / Sembunyikan Password">
                             <i data-lucide="eye" class="size-4"></i>
                         </button>
@@ -131,48 +134,48 @@
 
                 <div class="pt-4 text-center">
                     <button type="submit"
-                            class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                            class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
                         Submit
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- REGISTER FORM -->
-        <div id="registerFormContainer" class="block max-w-lg mx-auto">
+        <!-- REGISTER FORM (EXPANDED TO MAX-W-XL) -->
+        <div id="registerFormContainer" class="block max-w-xl mx-auto">
             <form action="/auth/register" method="POST" class="space-y-4">
                 <?= csrf_field() ?>
                 <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? '') ?>">
 
                 <div>
-                    <label for="reg_fullname" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama* :</label>
+                    <label for="reg_fullname" class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap * :</label>
                     <input type="text" id="reg_fullname" name="fullname" value="<?= esc(old('fullname') ?? '') ?>" required
-                           placeholder="Isi nama anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                           placeholder="Isi nama lengkap Anda"
+                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                 </div>
 
                 <div>
-                    <label for="reg_email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
+                    <label for="reg_email" class="block text-xs font-bold text-slate-700 mb-1.5">Email * :</label>
                     <input type="email" id="reg_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                           placeholder="Isi Email anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                           placeholder="Isi alamat email Anda"
+                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                 </div>
 
                 <div>
-                    <label for="reg_phone" class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp* :</label>
+                    <label for="reg_phone" class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
                     <input type="text" id="reg_phone" name="phone" value="<?= esc(old('phone') ?? '') ?>" required
-                           placeholder="Isi No Telp anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                           placeholder="Contoh: 081234567890"
+                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                 </div>
 
                 <div>
-                    <label for="reg_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
+                    <label for="reg_password" class="block text-xs font-bold text-slate-700 mb-1.5">Password * :</label>
                     <div class="relative">
                         <input type="password" id="reg_password" name="password" required minlength="6"
-                               placeholder="Isi Password anda"
-                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                               placeholder="Minimal 6 karakter"
+                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                         <button type="button" onclick="toggleFrontendPassword('reg_password', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
                                 title="Tampilkan / Sembunyikan Password">
                             <i data-lucide="eye" class="size-4"></i>
                         </button>
@@ -180,13 +183,13 @@
                 </div>
 
                 <div>
-                    <label for="reg_password_confirm" class="block text-xs font-semibold text-slate-700 mb-1.5">Ulangi Password * :</label>
+                    <label for="reg_password_confirm" class="block text-xs font-bold text-slate-700 mb-1.5">Ulangi Password * :</label>
                     <div class="relative">
                         <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
-                               placeholder="Ulangi Isi Password anda"
-                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                               placeholder="Ulangi isi password Anda"
+                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                         <button type="button" onclick="toggleFrontendPassword('reg_password_confirm', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
                                 title="Tampilkan / Sembunyikan Password">
                             <i data-lucide="eye" class="size-4"></i>
                         </button>
@@ -197,13 +200,13 @@
                     <input type="checkbox" id="reg_terms" name="terms" value="1" required
                            class="mt-1 rounded border-slate-300 text-[#C41E24] focus:ring-[#C41E24]">
                     <label for="reg_terms" class="text-[11px] text-slate-500 leading-snug cursor-pointer">
-                        Dengan mengklik button di bawah anda berarti setuju dan tunduk terhadap aturan yang telah di tetapkan datasatu vocational learning center
+                        Dengan mengklik tombol di bawah Anda setuju dan tunduk terhadap aturan yang telah ditetapkan Datasatu Vocational Learning Center.
                     </label>
                 </div>
 
                 <div class="pt-4 text-center">
                     <button type="submit"
-                            class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                            class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
                         Submit
                     </button>
                 </div>
@@ -243,16 +246,16 @@
             registerContainer.classList.add('hidden');
             registerContainer.classList.remove('block');
 
-            btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
-            btnRegister.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
+            btnLogin.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
+            btnRegister.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
         } else {
             registerContainer.classList.remove('hidden');
             registerContainer.classList.add('block');
             loginContainer.classList.add('hidden');
             loginContainer.classList.remove('block');
 
-            btnRegister.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
-            btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
+            btnRegister.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
+            btnLogin.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
         }
     }
 
