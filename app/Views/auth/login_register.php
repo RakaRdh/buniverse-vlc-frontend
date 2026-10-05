@@ -2,12 +2,15 @@
 
 <?= $this->section('content'); ?>
 
-<!-- Hero Top Curved Banner using header-bg.webp -->
-<div class="relative w-full bg-[url('/img/header-bg.webp')] bg-cover bg-no-repeat bg-bottom h-[140px] sm:h-[180px] lg:h-[220px] flex items-center justify-center overflow-hidden">
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide text-white drop-shadow-sm">
-        <?= !empty($program) ? 'Daftar kelas' : 'LOGIN / SIGN IN' ?>
-    </h1>
-</div>
+<!-- Hero Top Curved Banner using header-bg.webp (Organic original wave shape) -->
+<section class="relative w-full overflow-hidden text-center text-white min-h-[140px] sm:min-h-[170px] lg:min-h-[200px] flex items-center justify-center">
+    <img src="/img/header-bg.webp" alt="" class="absolute inset-0 w-full h-full object-fill object-bottom select-none pointer-events-none">
+    <div class="relative z-10 max-w-4xl mx-auto px-4 py-8 sm:py-10">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight drop-shadow-xs">
+            <?= !empty($program) ? 'Daftar Kelas' : 'Login / Daftar' ?>
+        </h1>
+    </div>
+</section>
 
 <div class="max-w-2xl mx-auto px-4 py-8">
     <!-- Program Details Section (matching Gambar 2 & Gambar 3) -->
@@ -79,15 +82,15 @@
                 $profile = $profileModel->where('member_id', session('member_id'))->first();
                 $memberPhone = trim($profile['phone'] ?? '');
             ?>
-            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <div class="max-w-lg mx-auto my-8 p-6 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
                 <?php if (empty($memberPhone)): ?>
-                    <div class="mb-4 pb-3 border-b border-slate-100 text-left">
-                        <div class="flex items-center gap-2 text-[#C41E24] mb-1 font-bold text-xs">
+                    <div class="mb-5 pb-4 border-b border-slate-100 text-left">
+                        <div class="flex items-center gap-2 text-[#C41E24] mb-1 font-bold text-sm">
                             <i data-lucide="alert-circle" class="size-4 shrink-0"></i>
                             <span>Lengkapi Nomor Telepon Anda</span>
                         </div>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Silakan lengkapi nomor telepon / WhatsApp Anda sebelum mendaftar kelas.
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Akun Anda belum memiliki nomor WhatsApp / Telepon aktif. Silakan lengkapi nomor telepon Anda untuk konfirmasi jadwal kelas dan pendaftaran.
                         </p>
                     </div>
 
@@ -95,30 +98,28 @@
                         <?= csrf_field() ?>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap :</label>
-                            <input type="text" value="<?= esc(session('member_name')) ?>" readonly
-                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-5 py-2.5 text-xs text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                            <label for="enroll_fullname_auth" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama* :</label>
+                            <input type="text" id="enroll_fullname_auth" value="<?= esc(session('member_name')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-300 bg-slate-50 px-5 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Email :</label>
-                            <input type="email" value="<?= esc(session('member_email')) ?>" readonly
-                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-5 py-2.5 text-xs text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                            <label for="enroll_email_auth" class="block text-xs font-semibold text-slate-700 mb-1.5">Email* :</label>
+                            <input type="email" id="enroll_email_auth" value="<?= esc(session('member_email')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-300 bg-slate-50 px-5 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
                         </div>
 
                         <div>
-                            <label for="enroll_phone_auth" class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp / Telepon * :</label>
-                            <input type="tel" id="enroll_phone_auth" name="phone" required
+                            <label for="enroll_phone_auth" class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp* :</label>
+                            <input type="text" id="enroll_phone_auth" name="phone" required
                                    value="<?= esc(old('phone') ?? '') ?>"
-                                   placeholder="Contoh: 081234567890"
-                                   pattern="^[0-9\-\+\s\(\)]{8,20}$"
-                                   title="Masukkan nomor telepon/WhatsApp yang valid (8-20 digit)"
-                                   class="w-full rounded-full border border-slate-300 px-5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                                   placeholder="Isi No Telp anda"
+                                   class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
                         </div>
 
-                        <div class="pt-3 text-center">
-                            <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95 text-xs">
-                                Simpan &amp; Daftar Kelas
+                        <div class="pt-4 text-center">
+                            <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-12 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                                Submit
                             </button>
                         </div>
                     </form>
@@ -137,15 +138,15 @@
 
     <?php else: ?>
 
-        <!-- Tabs (LOGIN | REGISTER) matching Gambar 3 -->
-        <div class="flex border-b border-slate-200 mb-8 max-w-md mx-auto">
+        <!-- Tabs (Login | Daftar Sekarang) matching programs_detail.php -->
+        <div class="flex border-b border-slate-200 mb-8 max-w-xl mx-auto">
             <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
-                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'login') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
-                LOGIN
+                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer <?= ($active_tab === 'login') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
+                Login
             </button>
             <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')"
-                    class="flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer <?= ($active_tab === 'register') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
-                REGISTER
+                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer <?= ($active_tab === 'register') ? 'text-[#C41E24] border-b-2 border-[#C41E24] -mb-px' : 'text-slate-400 hover:text-slate-600' ?>">
+                Daftar Sekarang
             </button>
         </div>
 
@@ -165,9 +166,16 @@
 
                 <div>
                     <label for="login_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                    <input type="password" id="login_password" name="password" required
-                           placeholder="Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="login_password" name="password" required
+                               placeholder="Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('login_password', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-4 text-center">
@@ -209,16 +217,30 @@
 
                 <div>
                     <label for="reg_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                    <input type="password" id="reg_password" name="password" required minlength="6"
-                           placeholder="Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="reg_password" name="password" required minlength="6"
+                               placeholder="Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('reg_password', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div>
                     <label for="reg_password_confirm" class="block text-xs font-semibold text-slate-700 mb-1.5">Ulangi Password * :</label>
-                    <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
-                           placeholder="Ulangi Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
+                               placeholder="Ulangi Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('reg_password_confirm', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-start gap-2 pt-2 px-1">
@@ -240,7 +262,24 @@
     <?php endif; ?>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script>
+    function toggleFrontendPassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const icon = btn.querySelector('[data-lucide]');
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            if (icon) icon.setAttribute('data-lucide', 'eye');
+        }
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
     function switchAuthTab(tab) {
         const loginContainer = document.getElementById('loginFormContainer');
         const registerContainer = document.getElementById('registerFormContainer');
@@ -267,6 +306,12 @@
             btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
 </script>
 
 <?= $this->endSection(); ?>

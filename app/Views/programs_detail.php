@@ -89,31 +89,29 @@
                         <?= csrf_field() ?>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap :</label>
-                            <input type="text" value="<?= esc(session('member_name')) ?>" readonly
-                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                            <label for="enroll_fullname" class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap * :</label>
+                            <input type="text" id="enroll_fullname" value="<?= esc(session('member_name')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-300 bg-slate-50 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Email :</label>
-                            <input type="email" value="<?= esc(session('member_email')) ?>" readonly
-                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                            <label for="enroll_email" class="block text-xs font-bold text-slate-700 mb-1.5">Email * :</label>
+                            <input type="email" id="enroll_email" value="<?= esc(session('member_email')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-300 bg-slate-50 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
                         </div>
 
                         <div>
                             <label for="enroll_phone" class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
-                            <input type="tel" id="enroll_phone" name="phone" required
+                            <input type="text" id="enroll_phone" name="phone" required
                                    value="<?= esc(old('phone') ?? '') ?>"
                                    placeholder="Contoh: 081234567890"
-                                   pattern="^[0-9\-\+\s\(\)]{8,20}$"
-                                   title="Masukkan nomor telepon/WhatsApp yang valid (8-20 digit)"
                                    class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                            <p class="text-[11px] text-slate-400 mt-1 pl-2">Nomor ini akan otomatis tersimpan di profil Anda untuk pendaftaran kelas mendatang.</p>
                         </div>
 
                         <div class="pt-4 text-center">
-                            <button type="submit" class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                                Simpan &amp; Daftar Kelas
+                            <button type="submit"
+                                    class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                                Submit
                             </button>
                         </div>
                     </form>
