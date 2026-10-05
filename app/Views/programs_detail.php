@@ -4,7 +4,7 @@
 
 <!-- Hero Top Curved Banner using header-bg.webp -->
 <div class="relative w-full bg-[url('/img/header-bg.webp')] bg-cover bg-no-repeat bg-bottom h-[140px] sm:h-[180px] lg:h-[220px] flex items-center justify-center overflow-hidden">
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide text-white drop-shadow-sm">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide text-white drop-shadow-sm">
         Daftar kelas
     </h1>
 </div>
@@ -66,9 +66,13 @@
                 </div>
                 <h3 class="text-base font-bold text-emerald-900">Anda Sudah Terdaftar di Kelas Ini</h3>
                 <p class="text-xs text-emerald-700 mt-1">Status: Terdaftar sebagai peserta aktif.</p>
-                <div class="mt-4">
+                <div class="mt-4 flex items-center justify-center gap-4">
+                    <a href="/profile" class="inline-block text-xs font-bold text-[#C41E24] hover:underline">
+                        Lihat Status di Profil &rarr;
+                    </a>
+                    <span class="text-slate-300">&bull;</span>
                     <a href="/#courses" class="inline-block text-xs font-semibold text-emerald-800 hover:underline">
-                        &larr; Lihat Kelas Lainnya
+                        Lihat Kelas Lainnya
                     </a>
                 </div>
             </div>
@@ -113,9 +117,16 @@
 
                 <div>
                     <label for="login_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                    <input type="password" id="login_password" name="password" required
-                           placeholder="Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="login_password" name="password" required
+                               placeholder="Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('login_password', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-4 text-center">
@@ -156,16 +167,30 @@
 
                 <div>
                     <label for="reg_password" class="block text-xs font-semibold text-slate-700 mb-1.5">Password * :</label>
-                    <input type="password" id="reg_password" name="password" required minlength="6"
-                           placeholder="Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="reg_password" name="password" required minlength="6"
+                               placeholder="Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('reg_password', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div>
                     <label for="reg_password_confirm" class="block text-xs font-semibold text-slate-700 mb-1.5">Ulangi Password * :</label>
-                    <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
-                           placeholder="Ulangi Isi Password anda"
-                           class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                    <div class="relative">
+                        <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
+                               placeholder="Ulangi Isi Password anda"
+                               class="w-full rounded-full border border-slate-300 pl-5 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        <button type="button" onclick="toggleFrontendPassword('reg_password_confirm', this)"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                title="Tampilkan / Sembunyikan Password">
+                            <i data-lucide="eye" class="size-4"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-start gap-2 pt-2 px-1">
@@ -187,7 +212,23 @@
     <?php endif; ?>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script>
+    function toggleFrontendPassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('[data-lucide]');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
     function switchAuthTab(tab) {
         const loginContainer = document.getElementById('loginFormContainer');
         const registerContainer = document.getElementById('registerFormContainer');
@@ -214,6 +255,12 @@
             btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
 </script>
 
 <?= $this->endSection(); ?>

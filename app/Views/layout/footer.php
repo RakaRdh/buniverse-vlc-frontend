@@ -3,7 +3,7 @@
         <div class="max-w-[1200px] mx-auto px-4 lg:px-10">
             <!-- Center Logo -->
             <div class="flex flex-col items-center justify-center mb-8">
-                <img src="/img/logo-vocational.webp" alt="Datasatu Vocational Learning Center" class="h-11 object-contain brightness-0 invert" />
+                <img src="/img/footer-logo-vocational.webp" alt="Datasatu Vocational Learning Center" class="h-10 sm:h-12 object-contain" />
             </div>
 
             <!-- Links -->

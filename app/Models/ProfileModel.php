@@ -13,16 +13,7 @@ class ProfileModel extends Model
     protected $allowedFields = [
         'member_id',
         'phone',
-        'university',
-        'major',
-        'job',
-        'company',
-        'address',
-        'city',
-        'province',
-        'birth_date',
-        'gender',
-        'photo'
+        'address'
     ];
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

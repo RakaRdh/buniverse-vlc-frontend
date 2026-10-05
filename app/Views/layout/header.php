@@ -1,6 +1,8 @@
 <?php 
-$isLoggedIn = session()->get('is_logged_in') || session()->get('auth_user'); 
+$isLoggedIn = session()->get('is_logged_in') || session()->get('auth_user') || session()->get('member_id'); 
 $userName = session()->get('member_name') ?? (session()->get('auth_user')['name'] ?? 'Peserta');
+$userInitial = strtoupper(substr(trim($userName), 0, 1));
+if (empty($userInitial)) $userInitial = 'P';
 ?>
 <header class="w-full border-b border-gray-100 bg-white sticky top-0 z-50 shadow-sm">
     <div class="max-w-[1440px] mx-auto flex items-center justify-between px-4 lg:px-10 h-[72px]">
@@ -17,8 +19,24 @@ $userName = session()->get('member_name') ?? (session()->get('auth_user')['name'
 
         <div class="flex items-center gap-4 text-sm font-medium">
             <?php if ($isLoggedIn): ?>
-                <span class="hidden sm:inline text-gray-700 font-semibold">Hi, <?= esc($userName) ?></span>
-                <a href="/logout" class="text-brand hover:text-brand-dark transition">Logout</a>
+                <!-- Profile Avatar Button -->
+                <a href="/profile" 
+                   class="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-brand/40 transition-all text-gray-800 group"
+                   title="Buka Profil & Status Kelas Saya">
+                    <div class="size-8 rounded-full bg-brand text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
+                        <?= esc($userInitial) ?>
+                    </div>
+                    <div class="hidden sm:flex flex-col text-left">
+                        <span class="text-xs font-bold leading-tight group-hover:text-brand transition-colors"><?= esc($userName) ?></span>
+                        <span class="text-[10px] text-gray-500 font-medium">Profil Saya</span>
+                    </div>
+                    <svg class="size-4 text-gray-400 group-hover:text-brand transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="/logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');" class="text-xs text-gray-500 hover:text-brand transition font-medium" title="Logout">
+                    Keluar
+                </a>
             <?php else: ?>
                 <a href="/login" class="text-gray-800 hover:text-brand transition">Login</a>
                 <span class="text-gray-300">|</span>

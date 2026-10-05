@@ -72,9 +72,8 @@ $routes->match(['get','post'],'admins/create','Admins::create');
 $routes->match(['get','post'],'admins/edit/(:any)','Admins::edit/$1');
 $routes->delete('admins/(:num)', 'Admins::delete/$1');
 
-$routes->match(['get','post'],'profile','Profile::index');
-$routes->match(['get','post'],'profile/security','Profile::security');
-$routes->get('profile/delme','Profile::delMe');
+$routes->get('profile', 'Profile::index');
+$routes->post('profile/update', 'Profile::update');
 
 $routes->get('domains','Domains::index');
 $routes->get('channels','Channels::index');
