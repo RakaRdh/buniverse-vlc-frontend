@@ -73,14 +73,65 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-500">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
-                <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-4">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
-                        Daftar Kelas Ini Sekarang
-                    </button>
-                </form>
+            <?php
+                $memberPhone = '';
+                $profileModel = new \App\Models\ProfileModel();
+                $profile = $profileModel->where('member_id', session('member_id'))->first();
+                $memberPhone = trim($profile['phone'] ?? '');
+            ?>
+            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
+                <?php if (empty($memberPhone)): ?>
+                    <div class="mb-4 pb-3 border-b border-slate-100 text-left">
+                        <div class="flex items-center gap-2 text-[#C41E24] mb-1 font-bold text-xs">
+                            <i data-lucide="alert-circle" class="size-4 shrink-0"></i>
+                            <span>Lengkapi Nomor Telepon Anda</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            Silakan lengkapi nomor telepon / WhatsApp Anda sebelum mendaftar kelas.
+                        </p>
+                    </div>
+
+                    <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="space-y-4 text-left">
+                        <?= csrf_field() ?>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap :</label>
+                            <input type="text" value="<?= esc(session('member_name')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-5 py-2.5 text-xs text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Email :</label>
+                            <input type="email" value="<?= esc(session('member_email')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-5 py-2.5 text-xs text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label for="enroll_phone_auth" class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp / Telepon * :</label>
+                            <input type="tel" id="enroll_phone_auth" name="phone" required
+                                   value="<?= esc(old('phone') ?? '') ?>"
+                                   placeholder="Contoh: 081234567890"
+                                   pattern="^[0-9\-\+\s\(\)]{8,20}$"
+                                   title="Masukkan nomor telepon/WhatsApp yang valid (8-20 digit)"
+                                   class="w-full rounded-full border border-slate-300 px-5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                        </div>
+
+                        <div class="pt-3 text-center">
+                            <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95 text-xs">
+                                Simpan &amp; Daftar Kelas
+                            </button>
+                        </div>
+                    </form>
+                <?php else: ?>
+                    <p class="text-xs text-slate-500 mb-2">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
+                    <p class="text-xs text-slate-400 mb-4">No. Telepon / WhatsApp: <strong class="text-slate-600"><?= esc($memberPhone) ?></strong></p>
+                    <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-4">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="bg-[#F5841F] hover:bg-[#e07212] text-white font-semibold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
+                            Daftar Kelas Ini Sekarang
+                        </button>
+                    </form>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 

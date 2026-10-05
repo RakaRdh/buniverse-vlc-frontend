@@ -108,8 +108,20 @@ class Auth extends BaseController
 
         // Auto-enroll if program_id was passed
         if (!empty($programId)) {
+            $program = $this->programModel->find($programId);
+            $redirectUrl = $program && !empty($program['slug']) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
+
+            // Cek apakah member sudah memiliki no telp di profile
+            $profile = $this->profileModel->where('member_id', $member['memberID'])->first();
+            $memberPhone = trim($profile['phone'] ?? '');
+
+            if (empty($memberPhone)) {
+                // Jangan langsung daftarkan, kembalikan ke halaman registrasi kelas untuk melengkapi nomor telepon
+                return redirect()->to($redirectUrl)->with('error', 'Silakan lengkapi Nomor WhatsApp / Telepon Anda terlebih dahulu untuk menyelesaikan pendaftaran kelas.');
+            }
+
             $this->enrollmentModel->enrollMember($member['memberID'], $programId);
-            return redirect()->to('/programs/programs_detail?id=' . $programId)->with('success', 'Login berhasil dan Anda telah terdaftar di kelas!');
+            return redirect()->to($redirectUrl)->with('success', 'Login berhasil dan Anda telah terdaftar di kelas!');
         }
 
         if (!empty($redirect)) {

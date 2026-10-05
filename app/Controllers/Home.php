@@ -124,9 +124,19 @@ class Home extends BaseController
 			}
 		}
 
+		// Check member's profile for phone number
+		$memberPhone = '';
+		$memberId = session('member_id');
+		if ($memberId) {
+			$profileModel = new \App\Models\ProfileModel();
+			$profile = $profileModel->where('member_id', $memberId)->first();
+			$memberPhone = trim($profile['phone'] ?? '');
+		}
+
 		return view('programs_detail', [
-			'program' => $program,
-			'title'   => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
+			'program'     => $program,
+			'memberPhone' => $memberPhone,
+			'title'       => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
 		]);
 	}
 
@@ -137,9 +147,34 @@ class Home extends BaseController
 			return redirect()->to('/login?redirect=' . urlencode('/programs/programs_detail?id=' . $programId))->with('error', 'Silakan masuk atau buat akun untuk mendaftar kelas.');
 		}
 
+		$profileModel = new \App\Models\ProfileModel();
+		$profile = $profileModel->where('member_id', $memberId)->first();
+		$existingPhone = trim($profile['phone'] ?? '');
+
+		// Check if phone was submitted in this request
+		$postedPhone = trim($this->request->getPost('phone') ?? '');
+		$phoneToUse = !empty($postedPhone) ? $postedPhone : $existingPhone;
+
+		$programModel = new \App\Models\ProgramModel();
+		$program = $programModel->find($programId);
+		$redirectUrl = $program && !empty($program['slug']) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
+
+		if (empty($phoneToUse)) {
+			return redirect()->to($redirectUrl)->withInput()->with('error', 'Nomor WhatsApp / Telepon wajib diisi untuk konfirmasi pendaftaran.');
+		}
+
+		// Save or update phone in profile if newly entered
+		if (!empty($postedPhone) && $postedPhone !== $existingPhone) {
+			if ($profile) {
+				$profileModel->update($profile['id'], ['phone' => $postedPhone]);
+			} else {
+				$profileModel->insert(['member_id' => $memberId, 'phone' => $postedPhone]);
+			}
+		}
+
 		$enrollmentModel = new \App\Models\EnrollmentModel();
 		$enrolled = $enrollmentModel->enrollMember($memberId, $programId);
 
-		return redirect()->to('/programs/programs_detail?id=' . $programId)->with('success', 'Pendaftaran kelas berhasil!');
+		return redirect()->to($redirectUrl)->with('success', 'Pendaftaran kelas berhasil!');
 	}
 }

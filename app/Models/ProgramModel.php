@@ -34,6 +34,11 @@ class ProgramModel extends Model
                     ->findAll();
     }
 
+    public function getProgramBySlug($slug)
+    {
+        return $this->getProgramWithModules($slug);
+    }
+
     public function getProgramWithModules($slugOrId)
     {
         $program = is_numeric($slugOrId) 

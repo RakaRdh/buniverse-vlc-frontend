@@ -2,26 +2,23 @@
 
 <?= $this->section('content'); ?>
 
-<!-- Hero Top Curved Banner using header-bg.webp (Clean title case, seamless top start) -->
-<section class="relative w-full bg-[#C41E24] bg-[url('/img/header-bg.webp')] bg-cover bg-center bg-no-repeat py-12 sm:py-16 text-center text-white overflow-hidden shadow-xs">
-    <div class="max-w-4xl mx-auto px-4">
+<!-- Hero Top Curved Banner using header-bg.webp (Starts cleanly AFTER navbar, organic original wave shape) -->
+<section class="relative w-full overflow-hidden text-center text-white min-h-[140px] sm:min-h-[170px] lg:min-h-[200px] flex items-center justify-center">
+    <img src="/img/header-bg.webp" alt="" class="absolute inset-0 w-full h-full object-fill object-bottom select-none pointer-events-none">
+    <div class="relative z-10 max-w-4xl mx-auto px-4 py-8 sm:py-10">
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight drop-shadow-xs">
-            Daftar Kelas Pelatihan
+            Daftar Kelas
         </h1>
-        <p class="text-xs sm:text-sm text-white/90 mt-1.5 font-medium">Lengkapi data diri Anda untuk mengikuti program pelatihan berkualitas.</p>
     </div>
 </section>
 
 <div class="max-w-4xl mx-auto px-4 py-8 lg:py-12">
-    <!-- Program Details Section -->
     <?php if (!empty($program)): ?>
         <div class="text-center mb-8">
-            <!-- Logo Vocational Learning Center -->
             <div class="flex justify-center mb-4">
                 <img src="/img/logo-vocational.webp" alt="Datasatu Vocational Learning Center" class="h-10 object-contain">
             </div>
 
-            <!-- Divider with logo-vlc-white.webp (Gambar 4) -->
             <div class="relative flex py-4 items-center max-w-2xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
@@ -30,7 +27,6 @@
                 <div class="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <!-- Title & Short Description -->
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-3 px-2">
                 <?= esc($program['name']) ?>
             </h2>
@@ -38,12 +34,10 @@
                 <?= esc($program['short_desc'] ?? $program['description']) ?>
             </p>
 
-            <!-- Course Banner Image -->
             <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 max-w-2xl mx-auto mb-6">
                 <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover">
             </div>
 
-            <!-- Second Divider with logo-vlc-white.webp (Gambar 4) -->
             <div class="relative flex py-4 items-center max-w-2xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
@@ -54,7 +48,6 @@
         </div>
     <?php endif; ?>
 
-    <!-- Enrollment State if already logged in -->
     <?php $isLoggedIn = session()->get('is_logged_in'); ?>
     <?php if ($isLoggedIn && !empty($program)): ?>
         <?php 
@@ -80,20 +73,67 @@
                 </div>
             </div>
         <?php else: ?>
-            <div class="max-w-xl mx-auto my-8 p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
-                <p class="text-xs text-slate-500">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
-                <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="mt-5">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
-                        Daftar Kelas Ini Sekarang
-                    </button>
-                </form>
+            <div class="max-w-xl mx-auto my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                <?php if (empty($memberPhone)): ?>
+                    <div class="mb-5 pb-4 border-b border-slate-100 text-left">
+                        <div class="flex items-center gap-2.5 text-[#C41E24] mb-1.5 font-bold text-sm">
+                            <i data-lucide="alert-circle" class="size-4 shrink-0"></i>
+                            <span>Lengkapi Nomor Telepon Anda</span>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Akun Anda belum memiliki nomor WhatsApp / Telepon aktif. Silakan lengkapi nomor telepon Anda untuk konfirmasi jadwal kelas dan pendaftaran.
+                        </p>
+                    </div>
+
+                    <form action="/programs/enroll/<?= $program['id'] ?>" method="POST" class="space-y-4 text-left">
+                        <?= csrf_field() ?>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap :</label>
+                            <input type="text" value="<?= esc(session('member_name')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Email :</label>
+                            <input type="email" value="<?= esc(session('member_email')) ?>" readonly
+                                   class="w-full rounded-full border border-slate-200 bg-slate-100/80 px-6 py-3 text-sm text-slate-600 cursor-not-allowed select-none focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label for="enroll_phone" class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
+                            <input type="tel" id="enroll_phone" name="phone" required
+                                   value="<?= esc(old('phone') ?? '') ?>"
+                                   placeholder="Contoh: 081234567890"
+                                   pattern="^[0-9\-\+\s\(\)]{8,20}$"
+                                   title="Masukkan nomor telepon/WhatsApp yang valid (8-20 digit)"
+                                   class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                            <p class="text-[11px] text-slate-400 mt-1 pl-2">Nomor ini akan otomatis tersimpan di profil Anda untuk pendaftaran kelas mendatang.</p>
+                        </div>
+
+                        <div class="pt-4 text-center">
+                            <button type="submit" class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                                Simpan &amp; Daftar Kelas
+                            </button>
+                        </div>
+                    </form>
+                <?php else: ?>
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500 mb-2">Masuk sebagai <strong class="text-slate-800"><?= esc(session('member_name')) ?></strong> (<?= esc(session('member_email')) ?>)</p>
+                        <p class="text-xs text-slate-400 mb-5">No. Telepon / WhatsApp terdaftar: <strong class="text-slate-600"><?= esc($memberPhone) ?></strong></p>
+                        <form action="/programs/enroll/<?= $program['id'] ?>" method="POST">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3 px-10 rounded-full shadow-md transition transform active:scale-95">
+                                Daftar Kelas Ini Sekarang
+                            </button>
+                        </form>
+                    </div>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
     <?php else: ?>
 
-        <!-- Tabs (LOGIN | REGISTER) matching Gambar 3 -->
         <div class="flex border-b border-slate-200 mb-8 max-w-xl mx-auto">
             <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
                     class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600">
@@ -105,7 +145,6 @@
             </button>
         </div>
 
-        <!-- LOGIN FORM (EXPANDED TO MAX-W-XL) -->
         <div id="loginFormContainer" class="hidden max-w-xl mx-auto">
             <form action="/auth/login" method="POST" class="space-y-5">
                 <?= csrf_field() ?>
@@ -141,7 +180,16 @@
             </form>
         </div>
 
-        <!-- REGISTER FORM (EXPANDED TO MAX-W-XL) -->
+        <?php
+        /**
+         * RELASI DAN ALUR PENDAFTARAN:
+         * Form registrasi ini terhubung ke App\Controllers\Auth::attemptRegister:
+         * 1. Data akun (fullname, email, password ter-hash SHA-512) disimpan ke tabel `tblmember`.
+         * 2. Nomor telepon/WhatsApp disimpan ke relasi profil di tabel `tblmember_profile` (foreign key: member_id).
+         * 3. Jika pengguna mendaftar melalui halaman detail program ini, program_id akan langsung
+         *    didaftarkan ke tabel `tblprogramenrollment` dengan status awal 'enrolled'.
+         */
+        ?>
         <div id="registerFormContainer" class="block max-w-xl mx-auto">
             <form action="/auth/register" method="POST" class="space-y-4">
                 <?= csrf_field() ?>

@@ -2,21 +2,28 @@
 
 <?= $this->section('content'); ?>
 
-<!-- Hero Top Curved Banner using header-bg.webp -->
-<section class="relative w-full bg-[#C41E24] bg-[url('/img/header-bg.webp')] bg-cover bg-center bg-no-repeat py-12 sm:py-16 text-center text-white overflow-hidden shadow-xs">
-    <div class="max-w-4xl mx-auto px-4">
+<!-- Hero Top Curved Banner using header-bg.webp (Organic original wave shape) -->
+<section class="relative w-full overflow-hidden text-center text-white min-h-[140px] sm:min-h-[170px] lg:min-h-[200px] flex items-center justify-center">
+    <img src="/img/header-bg.webp" alt="" class="absolute inset-0 w-full h-full object-fill object-bottom select-none pointer-events-none">
+    <div class="relative z-10 max-w-4xl mx-auto px-4 py-8 sm:py-10">
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight drop-shadow-xs">
             Profil Peserta
         </h1>
-        <p class="text-xs sm:text-sm text-white/90 mt-1.5 font-medium">Kelola informasi data diri dan pantau status pendaftaran kelas pelatihan Anda.</p>
     </div>
 </section>
 
-<!-- Main Profile Content Section -->
+<?php
+/**
+ * RELASI DATA PROFIL:
+ * Halaman ini membaca data dari tabel terelasi:
+ * 1. `tblmember`: Menyimpan kredensial dasar (memberID, fullname, email, password, salt, status, created_at).
+ * 2. `tblmember_profile`: Menyimpan data pelengkap profil (phone, address, avatar) dengan foreign key member_id -> tblmember.memberID.
+ * 3. `tblprogramenrollment`: Menampilkan daftar kursus/kelas yang diikuti beserta statusnya (enrolled, contacted, in_progress, finished).
+ */
+?>
 <section class="py-10 lg:py-14 bg-slate-50 min-h-[500px]">
     <div class="max-w-5xl mx-auto px-4 lg:px-8">
         
-        <!-- Flash Alerts -->
         <?php if (session()->getFlashdata('error')): ?>
             <div class="mb-6 flex items-center gap-3 rounded-2xl border border-red-500/20 bg-red-50 p-4 text-xs lg:text-sm text-red-600 shadow-xs">
                 <svg class="size-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,10 +42,8 @@
             </div>
         <?php endif; ?>
 
-        <!-- Two-Column Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Left Column: Status Kelas yang Di-apply (7 Cols) -->
             <div class="lg:col-span-7 space-y-6">
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between pb-4 border-b border-slate-100">
