@@ -35,6 +35,8 @@ $routes->get('login', 'Auth::login');
 $routes->get('register', 'Auth::register');
 $routes->post('auth/login', 'Auth::attemptLogin');
 $routes->post('auth/register', 'Auth::attemptRegister');
+$routes->get('auth/verify', 'Auth::verify');
+$routes->post('auth/resend-verification', 'Auth::resendVerification');
 $routes->get('logout', 'Auth::logout');
 
 // Member Profile

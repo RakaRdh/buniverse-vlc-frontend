@@ -13,6 +13,21 @@
 </section>
 
 <div class="max-w-4xl mx-auto px-4 py-8 lg:py-12">
+    <!-- Flash Messages -->
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold flex items-center gap-2">
+            <i data-lucide="alert-circle" class="size-4 shrink-0 text-red-500"></i>
+            <span><?= esc(session()->getFlashdata('error')) ?></span>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="size-4 shrink-0 text-emerald-500"></i>
+            <span><?= esc(session()->getFlashdata('success')) ?></span>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($program)): ?>
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
@@ -60,23 +75,106 @@
     <?php if ($isLoggedIn && !empty($program)): ?>
         <?php $alreadyEnrolled = $alreadyEnrolled ?? false; ?>
 
-        <?php if ($alreadyEnrolled): ?>
-            <div class="max-w-xl mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
-                <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
-                    <svg class="size-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <?php if ($alreadyEnrolled && !empty($currentEnrollment)): ?>
+            <?php $eStatus = $currentEnrollment['status'] ?? 'waiting'; ?>
+
+            <?php if ($eStatus === 'waiting' || $eStatus === 'enrolled'): ?>
+                <!-- Status Waiting: Menunggu Verifikasi Admin -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-amber-100 text-amber-600 items-center justify-center mb-3">
+                        <i data-lucide="clock" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-amber-950">Menunggu Verifikasi Admin Terlebih Dahulu</h3>
+                    <p class="text-xs sm:text-sm text-amber-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Pendaftaran Anda sedang dalam antrean verifikasi oleh tim admin Datasatu VLC (estimasi batas peninjauan 1–3 hari kerja). Konfirmasi pendaftaran akan dikirimkan ke email dan nomor WhatsApp Anda.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
                 </div>
-                <h3 class="text-base font-bold text-emerald-900">Anda Sudah Terdaftar di Kelas Ini</h3>
-                <p class="text-xs text-emerald-700 mt-1">Status: Terdaftar sebagai peserta aktif.</p>
-                <div class="mt-5 flex items-center justify-center gap-4">
-                    <a href="/profile" class="inline-block text-xs font-bold text-[#C41E24] hover:underline">
-                        Lihat Status di Profil &rarr;
-                    </a>
-                    <span class="text-slate-300">&bull;</span>
-                    <a href="/#courses" class="inline-block text-xs font-semibold text-emerald-800 hover:underline">
-                        Lihat Kelas Lainnya
-                    </a>
+            <?php elseif ($eStatus === 'contacted'): ?>
+                <!-- Status Contacted -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-sky-50/90 border border-sky-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-sky-100 text-sky-600 items-center justify-center mb-3">
+                        <i data-lucide="message-circle" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-sky-950">Pendaftaran Sedang Ditindaklanjuti</h3>
+                    <p class="text-xs sm:text-sm text-sky-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Tim admin kami sedang menghubungi Anda melalui WhatsApp untuk koordinasi jadwal kelas dan rincian administratif.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
                 </div>
-            </div>
+            <?php elseif ($eStatus === 'active' || $eStatus === 'in_progress'): ?>
+                <!-- Status Active: Terverifikasi -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
+                        <i data-lucide="check-circle-2" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-emerald-950">Pendaftaran Anda Telah Terverifikasi</h3>
+                    <p class="text-xs sm:text-sm text-emerald-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Status: Terdaftar sebagai peserta aktif di kelas ini. Tim admin telah mengonfirmasi keikutsertaan Anda.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
+                </div>
+            <?php elseif ($eStatus === 'finished'): ?>
+                <!-- Status Finished -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
+                        <i data-lucide="award" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-emerald-950">Pelatihan Telah Selesai</h3>
+                    <p class="text-xs sm:text-sm text-emerald-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Anda telah berhasil menyelesaikan program pelatihan vokasi ini. Terima kasih telah belajar bersama Datasatu VLC.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
+                </div>
+            <?php elseif ($eStatus === 'rejected'): ?>
+                <!-- Status Rejected -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
+                        <i data-lucide="x-circle" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Verifikasi Pendaftaran Belum Disetujui</h3>
+                    <p class="text-xs sm:text-sm text-rose-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Mohon maaf, pendaftaran Anda untuk batch program ini belum dapat disetujui (kuota telah penuh atau batas verifikasi 3 hari telah berakhir). Silakan memilih kelas lainnya di katalog kami.
+                    </p>
+                    <div class="mt-5">
+                        <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
+                            Lihat Pilihan Kelas Lainnya &rarr;
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php else: ?>
             <div class="max-w-xl mx-auto my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
                 <?php if (empty($memberPhone)): ?>
@@ -136,185 +234,29 @@
         <?php endif; ?>
 
     <?php else: ?>
-
-        <div class="flex border-b border-slate-200 mb-8 max-w-xl mx-auto">
-            <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')"
-                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600">
-                Login
-            </button>
-            <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')"
-                    class="flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px">
-                Daftar Sekarang
-            </button>
-        </div>
-
-        <div id="loginFormContainer" class="hidden max-w-xl mx-auto">
-            <form action="/auth/login" method="POST" class="space-y-5">
-                <?= csrf_field() ?>
-                <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? '') ?>">
-
-                <div>
-                    <label for="login_email" class="block text-xs font-bold text-slate-700 mb-1.5">Email * :</label>
-                    <input type="email" id="login_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                           placeholder="Isi email Anda"
-                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                </div>
-
-                <div>
-                    <label for="login_password" class="block text-xs font-bold text-slate-700 mb-1.5">Password * :</label>
-                    <div class="relative">
-                        <input type="password" id="login_password" name="password" required
-                               placeholder="Isi password Anda"
-                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                        <button type="button" onclick="toggleFrontendPassword('login_password', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
-                                title="Tampilkan / Sembunyikan Password">
-                            <i data-lucide="eye" class="size-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="pt-4 text-center">
-                    <button type="submit"
-                            class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                        Submit
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <?php
-        /**
-         * RELASI DAN ALUR PENDAFTARAN:
-         * Form registrasi ini terhubung ke App\Controllers\Auth::attemptRegister:
-         * 1. Data akun (fullname, email, password ter-hash SHA-512) disimpan ke tabel `tblmember`.
-         * 2. Nomor telepon/WhatsApp disimpan ke relasi profil di tabel `tblmember_profile` (foreign key: member_id).
-         * 3. Jika pengguna mendaftar melalui halaman detail program ini, program_id akan langsung
-         *    didaftarkan ke tabel `tblprogramenrollment` dengan status awal 'enrolled'.
-         */
-        ?>
-        <div id="registerFormContainer" class="block max-w-xl mx-auto">
-            <form action="/auth/register" method="POST" class="space-y-4">
-                <?= csrf_field() ?>
-                <input type="hidden" name="program_id" value="<?= esc($program['id'] ?? '') ?>">
-
-                <div>
-                    <label for="reg_fullname" class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap * :</label>
-                    <input type="text" id="reg_fullname" name="fullname" value="<?= esc(old('fullname') ?? '') ?>" required
-                           placeholder="Isi nama lengkap Anda"
-                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                </div>
-
-                <div>
-                    <label for="reg_email" class="block text-xs font-bold text-slate-700 mb-1.5">Email * :</label>
-                    <input type="email" id="reg_email" name="email" value="<?= esc(old('email') ?? '') ?>" required
-                           placeholder="Isi alamat email Anda"
-                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                </div>
-
-                <div>
-                    <label for="reg_phone" class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
-                    <input type="text" id="reg_phone" name="phone" value="<?= esc(old('phone') ?? '') ?>" required
-                           placeholder="Contoh: 081234567890"
-                           class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                </div>
-
-                <div>
-                    <label for="reg_password" class="block text-xs font-bold text-slate-700 mb-1.5">Password * :</label>
-                    <div class="relative">
-                        <input type="password" id="reg_password" name="password" required minlength="6"
-                               placeholder="Minimal 6 karakter"
-                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                        <button type="button" onclick="toggleFrontendPassword('reg_password', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
-                                title="Tampilkan / Sembunyikan Password">
-                            <i data-lucide="eye" class="size-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="reg_password_confirm" class="block text-xs font-bold text-slate-700 mb-1.5">Ulangi Password * :</label>
-                    <div class="relative">
-                        <input type="password" id="reg_password_confirm" name="password_confirm" required minlength="6"
-                               placeholder="Ulangi isi password Anda"
-                               class="w-full rounded-full border border-slate-300 pl-6 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
-                        <button type="button" onclick="toggleFrontendPassword('reg_password_confirm', this)"
-                                class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 hover:text-slate-600 focus:outline-none"
-                                title="Tampilkan / Sembunyikan Password">
-                            <i data-lucide="eye" class="size-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-2 pt-2 px-1">
-                    <input type="checkbox" id="reg_terms" name="terms" value="1" required
-                           class="mt-1 rounded border-slate-300 text-[#C41E24] focus:ring-[#C41E24]">
-                    <label for="reg_terms" class="text-[11px] text-slate-500 leading-snug cursor-pointer">
-                        Dengan mengklik tombol di bawah Anda setuju dan tunduk terhadap aturan yang telah ditetapkan Datasatu Vocational Learning Center.
-                    </label>
-                </div>
-
-                <div class="pt-4 text-center">
-                    <button type="submit"
-                            class="bg-[#FF8D28] hover:bg-[#e07212] text-white font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                        Submit
-                    </button>
-                </div>
-            </form>
+        <!-- State: User belum login - tampilkan CTA button dan notes -->
+        <div class="max-w-xl mx-auto my-10 p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <div class="flex flex-col items-center justify-center">
+                <a href="/login?program_id=<?= esc($program['id'] ?? '') ?>"
+                   class="inline-block bg-[#FF8D28] hover:bg-[#e07212] text-white text-base font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                    Daftar Sekarang
+                </a>
+                <p class="text-xs text-slate-500 mt-3.5 font-medium">
+                    Silahkan login menggunakan akun Datasatu, atau buat akun baru sekarang!*
+                </p>
+            </div>
         </div>
     <?php endif; ?>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script>
-    function toggleFrontendPassword(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const icon = btn.querySelector('[data-lucide]');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.setAttribute('data-lucide', 'eye-off');
-        } else {
-            input.type = 'password';
-            icon.setAttribute('data-lucide', 'eye');
-        }
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    }
-
-    function switchAuthTab(tab) {
-        const loginContainer = document.getElementById('loginFormContainer');
-        const registerContainer = document.getElementById('registerFormContainer');
-        const btnLogin = document.getElementById('tabBtnLogin');
-        const btnRegister = document.getElementById('tabBtnRegister');
-
-        if (!loginContainer || !registerContainer) return;
-
-        if (tab === 'login') {
-            loginContainer.classList.remove('hidden');
-            loginContainer.classList.add('block');
-            registerContainer.classList.add('hidden');
-            registerContainer.classList.remove('block');
-
-            btnLogin.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
-            btnRegister.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
-        } else {
-            registerContainer.classList.remove('hidden');
-            registerContainer.classList.add('block');
-            loginContainer.classList.add('hidden');
-            loginContainer.classList.remove('block');
-
-            btnRegister.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
-            btnLogin.className = "flex-1 py-3 text-center text-sm font-bold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
-        }
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
         if (window.lucide) {
             lucide.createIcons();
         }
     });
 </script>
+
 
 <?= $this->endSection(); ?>

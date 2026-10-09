@@ -122,6 +122,7 @@ class Home extends BaseController
 		// Check member's profile for phone number & enrollment status via API
 		$memberPhone = '';
 		$alreadyEnrolled = false;
+		$currentEnrollment = null;
 		$memberId = session('member_id');
 		if ($memberId) {
 			$profileRes = $this->api->getProfile($memberId);
@@ -133,6 +134,7 @@ class Home extends BaseController
 				foreach ($enrollments as $e) {
 					if ((int)$e['program_id'] === (int)$program['id']) {
 						$alreadyEnrolled = true;
+						$currentEnrollment = $e;
 						break;
 					}
 				}
@@ -140,10 +142,11 @@ class Home extends BaseController
 		}
 
 		return view('programs_detail', [
-			'program'         => $program,
-			'memberPhone'     => $memberPhone,
-			'alreadyEnrolled' => $alreadyEnrolled,
-			'title'           => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
+			'program'           => $program,
+			'memberPhone'       => $memberPhone,
+			'alreadyEnrolled'   => $alreadyEnrolled,
+			'currentEnrollment' => $currentEnrollment,
+			'title'             => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
 		]);
 	}
 
@@ -163,7 +166,7 @@ class Home extends BaseController
 		$response = $this->api->enroll($memberId, $programId, $postedPhone);
 
 		if (!empty($response['success'])) {
-			return redirect()->to($redirectUrl)->with('success', $response['message'] ?? 'Pendaftaran kelas berhasil!');
+			return redirect()->to($redirectUrl)->with('success', 'Pendaftaran kelas berhasil dikirimkan! Status Anda saat ini menunggu verifikasi admin (estimasi 1-3 hari kerja).');
 		}
 
 		return redirect()->to($redirectUrl)->withInput()->with('error', $response['message'] ?? 'Gagal mendaftar kelas.');

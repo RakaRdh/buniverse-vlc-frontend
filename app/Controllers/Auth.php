@@ -158,30 +158,43 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('error', $response['message'] ?? 'Pendaftaran gagal.');
         }
 
-        $memberData = $response['data']['member'] ?? [];
-        $memberId = $memberData['memberID'] ?? null;
+        $successMsg = 'Pendaftaran akun berhasil! Tautan verifikasi telah dikirimkan ke email (' . $email . '). Silakan periksa inbox email Anda untuk mengaktifkan akun sebelum masuk.';
 
-        // Auto-login session
-        session()->set([
-            'is_logged_in' => true,
-            'member_id'    => $memberId,
-            'member_name'  => $fullname,
-            'member_email' => $email,
-        ]);
+        $loginUrl = '/login' . (!empty($programId) ? '?program_id=' . $programId : '');
+        return redirect()->to($loginUrl)->with('success', $successMsg)->with('unverified_email', $email);
+    }
 
-        // If enrolled directly from a program
-        if (!empty($programId)) {
-            $this->api->enroll($memberId, $programId, $phone);
-            $program = $this->api->getProgramDetail($programId);
-            $redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
-            return redirect()->to($redirectUrl)->with('success', 'Registrasi berhasil! Anda telah resmi terdaftar di kelas.');
+    public function verify()
+    {
+        $token = trim($this->request->getGet('token') ?? '');
+        $email = strtolower(trim($this->request->getGet('email') ?? ''));
+
+        if (empty($token) || empty($email)) {
+            return redirect()->to('/login')->with('error', 'Tautan verifikasi email tidak lengkap atau tidak valid.');
         }
 
-        if (!empty($redirect)) {
-            return redirect()->to($redirect)->with('success', 'Pendaftaran akun berhasil!');
+        $res = $this->api->verifyEmail($token, $email);
+
+        if (!empty($res['success'])) {
+            return redirect()->to('/login')->with('success', $res['message'] ?? 'Email Anda berhasil diverifikasi! Silakan masuk dengan kata sandi Anda untuk melanjutkan.');
         }
 
-        return redirect()->to('/')->with('success', 'Pendaftaran berhasil! Selamat datang di VLC Datasatu.');
+        return redirect()->to('/login')->with('error', $res['message'] ?? 'Verifikasi email gagal atau tautan telah kedaluwarsa.');
+    }
+
+    public function resendVerification()
+    {
+        $email = strtolower(trim($this->request->getPost('email') ?? ''));
+        if (empty($email)) {
+            return redirect()->back()->with('error', 'Alamat email wajib diisi.');
+        }
+
+        $res = $this->api->resendVerification($email);
+        if (!empty($res['success'])) {
+            return redirect()->back()->with('success', $res['message'] ?? 'Tautan verifikasi baru berhasil dikirim ke email Anda.');
+        }
+
+        return redirect()->back()->with('error', $res['message'] ?? 'Gagal mengirim ulang tautan verifikasi.');
     }
 
     public function logout()

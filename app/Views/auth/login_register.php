@@ -13,6 +13,43 @@
 </section>
 
 <div class="max-w-2xl mx-auto px-4 py-8">
+    <!-- Flash Messages -->
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold flex items-center gap-2">
+            <i data-lucide="alert-circle" class="size-4 shrink-0 text-red-500"></i>
+            <div>
+                <span><?= esc(session()->getFlashdata('error')) ?></span>
+                <?php if (session()->getFlashdata('unverified_email')): ?>
+                    <form action="/auth/resend-verification" method="POST" class="mt-2">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="email" value="<?= esc(session()->getFlashdata('unverified_email')) ?>">
+                        <button type="submit" class="text-xs text-[#C41E24] underline hover:text-[#9b151a] font-bold">
+                            Kirim Ulang Email Verifikasi &rarr;
+                        </button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="size-4 shrink-0 text-emerald-500"></i>
+            <div>
+                <span><?= esc(session()->getFlashdata('success')) ?></span>
+                <?php if (session()->getFlashdata('unverified_email')): ?>
+                    <form action="/auth/resend-verification" method="POST" class="mt-2">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="email" value="<?= esc(session()->getFlashdata('unverified_email')) ?>">
+                        <button type="submit" class="text-xs text-[#C41E24] underline hover:text-[#9b151a] font-bold">
+                            Kirim Ulang Email Verifikasi &rarr;
+                        </button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Program Details Section (matching Gambar 2 & Gambar 3) -->
     <?php if (!empty($program)): ?>
         <div class="text-center mb-8">
@@ -59,22 +96,110 @@
     <?php if ($isLoggedIn && !empty($program)): ?>
         <?php 
             $enrollmentModel = new \App\Models\EnrollmentModel();
-            $alreadyEnrolled = $enrollmentModel->isEnrolled(session('member_id'), $program['id']);
+            $userEnrollment = $enrollmentModel->where('member_id', session('member_id'))->where('program_id', $program['id'])->first();
+            $alreadyEnrolled = !empty($userEnrollment);
         ?>
 
         <?php if ($alreadyEnrolled): ?>
-            <div class="max-w-md mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
-                <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
-                    <svg class="size-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <?php $eStatus = $userEnrollment['status'] ?? 'waiting'; ?>
+
+            <?php if ($eStatus === 'waiting' || $eStatus === 'enrolled'): ?>
+                <!-- Status Waiting: Menunggu Verifikasi Admin -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-amber-100 text-amber-600 items-center justify-center mb-3">
+                        <i data-lucide="clock" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-amber-950">Menunggu Verifikasi Admin Terlebih Dahulu</h3>
+                    <p class="text-xs sm:text-sm text-amber-900/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Pendaftaran Anda telah diterima dan sedang dalam tahap review oleh tim admin. Proses verifikasi memerlukan waktu <strong>1&ndash;3 hari kerja</strong>.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
                 </div>
-                <h3 class="text-base font-bold text-emerald-900">Anda Sudah Terdaftar di Kelas Ini</h3>
-                <p class="text-xs text-emerald-700 mt-1">Status: Terdaftar sebagai peserta aktif.</p>
-                <div class="mt-4">
-                    <a href="/#courses" class="inline-block text-xs font-semibold text-emerald-800 hover:underline">
-                        &larr; Lihat Kelas Lainnya
-                    </a>
+            <?php elseif ($eStatus === 'contacted'): ?>
+                <!-- Status Contacted -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-blue-50/80 border border-blue-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-blue-100 text-blue-600 items-center justify-center mb-3">
+                        <i data-lucide="phone-call" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-blue-950">Pendaftaran Sedang Ditindaklanjuti</h3>
+                    <p class="text-xs sm:text-sm text-blue-900/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Tim admin kami telah menghubungi kontak WhatsApp Anda untuk konfirmasi jadwal dan administrasi kelas.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
                 </div>
-            </div>
+            <?php elseif ($eStatus === 'active' || $eStatus === 'in_progress'): ?>
+                <!-- Status Active: Terverifikasi -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
+                        <i data-lucide="check-circle-2" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-emerald-950">Pendaftaran Anda Telah Terverifikasi</h3>
+                    <p class="text-xs sm:text-sm text-emerald-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Status: Terdaftar sebagai peserta aktif di kelas ini. Tim admin telah mengonfirmasi keikutsertaan Anda.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
+                </div>
+            <?php elseif ($eStatus === 'finished'): ?>
+                <!-- Status Finished -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
+                        <i data-lucide="award" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-emerald-950">Pelatihan Telah Selesai</h3>
+                    <p class="text-xs sm:text-sm text-emerald-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Anda telah berhasil menyelesaikan program pelatihan vokasi ini. Terima kasih telah belajar bersama Datasatu VLC.
+                    </p>
+                    <div class="mt-5 flex items-center justify-center gap-4 text-xs font-semibold">
+                        <a href="/profile" class="text-[#C41E24] hover:underline font-bold">
+                            Lihat Status di Profil &rarr;
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                            Lihat Kelas Lainnya
+                        </a>
+                    </div>
+                </div>
+            <?php elseif ($eStatus === 'rejected'): ?>
+                <!-- Status Rejected -->
+                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
+                    <div class="inline-flex size-12 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
+                        <i data-lucide="x-circle" class="size-6"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Verifikasi Pendaftaran Belum Disetujui</h3>
+                    <p class="text-xs sm:text-sm text-rose-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
+                        Mohon maaf, pendaftaran Anda untuk batch program ini belum dapat disetujui (kuota telah penuh atau batas verifikasi 3 hari telah berakhir). Silakan memilih kelas lainnya di katalog kami.
+                    </p>
+                    <div class="mt-5">
+                        <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
+                            Lihat Pilihan Kelas Lainnya &rarr;
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php else: ?>
             <?php
                 $memberPhone = '';

@@ -210,6 +210,31 @@ class ApiService
     }
 
     /**
+     * POST /api/auth/verify (Verify email token)
+     */
+    public function verifyEmail(string $token, string $email): array
+    {
+        return $this->request('POST', 'auth/verify', [
+            'form_params' => [
+                'token' => $token,
+                'email' => $email,
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/auth/resend-verification
+     */
+    public function resendVerification(string $email): array
+    {
+        return $this->request('POST', 'auth/resend-verification', [
+            'form_params' => [
+                'email' => $email,
+            ],
+        ]);
+    }
+
+    /**
      * GET /api/profile/(:num) (Never cached - real-time member account state)
      */
     public function getProfile($memberId): array
