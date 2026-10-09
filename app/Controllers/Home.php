@@ -1,21 +1,25 @@
 <?php
 namespace App\Controllers;
 
-use App\Models\ProgramModel;
-use App\Models\GalleryModel;
-use App\Models\FaqModel;
+use App\Services\ApiService;
 
 class Home extends BaseController
 {
+	protected ApiService $api;
+
+	public function __construct()
+	{
+		$this->api = new ApiService();
+	}
+
 	public function index()
 	{
-		// Fetch active courses from DB (max 3 for centered display)
-		$programModel = new ProgramModel();
-		$dbPrograms = $programModel->getActivePrograms();
+		// Fetch active courses from REST API (max 3 for centered display)
+		$dbPrograms = $this->api->getPrograms();
 		$courses = [];
 
 		foreach ($dbPrograms as $p) {
-			$details = $programModel->getProgramWithModules($p['id']);
+			$details = $this->api->getProgramDetail($p['id']);
 			$courses[] = [
 				'id'              => $p['id'],
 				'slug'            => $p['slug'],
@@ -24,9 +28,9 @@ class Home extends BaseController
 				'title'           => $p['name'],
 				'about'           => $p['short_desc'] ?? $p['description'],
 				'duration'        => $p['duration'] ?? '3 Hari',
-				'modules_count'   => ($details['modules_count'] ?? 0) . ' modul',
+				'modules_count'   => ($details['modules_count'] ?? $p['modules_count'] ?? 0) . ' modul',
 				'has_video'       => '1 video',
-				'has_certificate' => $p['has_certificate'] ? 'Sertifikat' : '',
+				'has_certificate' => !empty($p['has_certificate']) ? 'Sertifikat' : '',
 			];
 		}
 
@@ -50,9 +54,8 @@ class Home extends BaseController
 		// Limit courses to max 3 as requested
 		$courses = array_slice($courses, 0, 3);
 
-		// Fetch dynamic gallery from DB
-		$galleryModel = new GalleryModel();
-		$galleries = $galleryModel->getActiveGalleries();
+		// Fetch dynamic gallery from REST API
+		$galleries = $this->api->getGalleries();
 		if (empty($galleries)) {
 			$galleries = [
 				['image' => '/img/gallery-1.webp', 'title' => 'Gallery 1'],
@@ -61,9 +64,8 @@ class Home extends BaseController
 			];
 		}
 
-		// Fetch dynamic FAQ from DB
-		$faqModel = new FaqModel();
-		$faqs = $faqModel->getActiveFaqs();
+		// Fetch dynamic FAQ from REST API
+		$faqs = $this->api->getFaqs();
 		if (empty($faqs)) {
 			$faqs = [
 				['question' => 'Berapa lama training akan berlangsung?', 'answer' => 'Durasi training bervariasi tergantung modul, umumnya berlangsung antara 2 sampai 4 minggu secara hybrid.'],
@@ -91,8 +93,7 @@ class Home extends BaseController
 
 	public function programs()
 	{
-		$programModel = new ProgramModel();
-		$programs = $programModel->getActivePrograms();
+		$programs = $this->api->getPrograms();
 
 		return view('programs', [
 			'programs' => $programs,
@@ -102,41 +103,47 @@ class Home extends BaseController
 
 	public function programsdetail($identifier = null)
 	{
-		$programModel = new ProgramModel();
-		
 		$programId = $this->request->getGet('id');
 		$program = null;
 
 		if (!empty($identifier)) {
-			if (is_numeric($identifier)) {
-				$program = $programModel->getProgramWithModules((int)$identifier);
-			} else {
-				$program = $programModel->getProgramBySlug($identifier);
-			}
+			$program = $this->api->getProgramDetail($identifier);
 		} elseif (!empty($programId)) {
-			$program = $programModel->getProgramWithModules((int)$programId);
+			$program = $this->api->getProgramDetail((int)$programId);
 		}
 
 		if (!$program) {
-			$first = $programModel->where('status', 'active')->first();
-			if ($first) {
-				$program = $programModel->getProgramWithModules($first['id']);
+			$all = $this->api->getPrograms();
+			if (!empty($all[0]['id'])) {
+				$program = $this->api->getProgramDetail($all[0]['id']);
 			}
 		}
 
-		// Check member's profile for phone number
+		// Check member's profile for phone number & enrollment status via API
 		$memberPhone = '';
+		$alreadyEnrolled = false;
 		$memberId = session('member_id');
 		if ($memberId) {
-			$profileModel = new \App\Models\ProfileModel();
-			$profile = $profileModel->where('member_id', $memberId)->first();
-			$memberPhone = trim($profile['phone'] ?? '');
+			$profileRes = $this->api->getProfile($memberId);
+			if (!empty($profileRes['data']['profile']['phone'])) {
+				$memberPhone = trim($profileRes['data']['profile']['phone']);
+			}
+			$enrollments = $profileRes['data']['enrollments'] ?? $this->api->getMemberEnrollments($memberId);
+			if (!empty($enrollments) && !empty($program['id'])) {
+				foreach ($enrollments as $e) {
+					if ((int)$e['program_id'] === (int)$program['id']) {
+						$alreadyEnrolled = true;
+						break;
+					}
+				}
+			}
 		}
 
 		return view('programs_detail', [
-			'program'     => $program,
-			'memberPhone' => $memberPhone,
-			'title'       => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
+			'program'         => $program,
+			'memberPhone'     => $memberPhone,
+			'alreadyEnrolled' => $alreadyEnrolled,
+			'title'           => ($program['name'] ?? 'Detail Program') . ' — DataSatu VLC'
 		]);
 	}
 
@@ -147,34 +154,18 @@ class Home extends BaseController
 			return redirect()->to('/login?redirect=' . urlencode('/programs/programs_detail?id=' . $programId))->with('error', 'Silakan masuk atau buat akun untuk mendaftar kelas.');
 		}
 
-		$profileModel = new \App\Models\ProfileModel();
-		$profile = $profileModel->where('member_id', $memberId)->first();
-		$existingPhone = trim($profile['phone'] ?? '');
+		$program = $this->api->getProgramDetail($programId);
+		$redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
 
-		// Check if phone was submitted in this request
 		$postedPhone = trim($this->request->getPost('phone') ?? '');
-		$phoneToUse = !empty($postedPhone) ? $postedPhone : $existingPhone;
 
-		$programModel = new \App\Models\ProgramModel();
-		$program = $programModel->find($programId);
-		$redirectUrl = $program && !empty($program['slug']) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
+		// Call REST API to enroll
+		$response = $this->api->enroll($memberId, $programId, $postedPhone);
 
-		if (empty($phoneToUse)) {
-			return redirect()->to($redirectUrl)->withInput()->with('error', 'Nomor WhatsApp / Telepon wajib diisi untuk konfirmasi pendaftaran.');
+		if (!empty($response['success'])) {
+			return redirect()->to($redirectUrl)->with('success', $response['message'] ?? 'Pendaftaran kelas berhasil!');
 		}
 
-		// Save or update phone in profile if newly entered
-		if (!empty($postedPhone) && $postedPhone !== $existingPhone) {
-			if ($profile) {
-				$profileModel->update($profile['id'], ['phone' => $postedPhone]);
-			} else {
-				$profileModel->insert(['member_id' => $memberId, 'phone' => $postedPhone]);
-			}
-		}
-
-		$enrollmentModel = new \App\Models\EnrollmentModel();
-		$enrolled = $enrollmentModel->enrollMember($memberId, $programId);
-
-		return redirect()->to($redirectUrl)->with('success', 'Pendaftaran kelas berhasil!');
+		return redirect()->to($redirectUrl)->withInput()->with('error', $response['message'] ?? 'Gagal mendaftar kelas.');
 	}
 }

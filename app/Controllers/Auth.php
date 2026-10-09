@@ -2,24 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Models\MemberModel;
-use App\Models\ProfileModel;
-use App\Models\EnrollmentModel;
-use App\Models\ProgramModel;
+use App\Services\ApiService;
 
 class Auth extends BaseController
 {
-    protected $memberModel;
-    protected $profileModel;
-    protected $enrollmentModel;
-    protected $programModel;
+    protected ApiService $api;
 
     public function __construct()
     {
-        $this->memberModel = new MemberModel();
-        $this->profileModel = new ProfileModel();
-        $this->enrollmentModel = new EnrollmentModel();
-        $this->programModel = new ProgramModel();
+        $this->api = new ApiService();
     }
 
     public function login()
@@ -31,7 +22,7 @@ class Auth extends BaseController
         $programId = $this->request->getGet('program_id');
         $program = null;
         if (!empty($programId)) {
-            $program = $this->programModel->getProgramWithModules($programId);
+            $program = $this->api->getProgramDetail($programId);
         }
 
         $data = [
@@ -53,7 +44,7 @@ class Auth extends BaseController
         $programId = $this->request->getGet('program_id');
         $program = null;
         if (!empty($programId)) {
-            $program = $this->programModel->getProgramWithModules($programId);
+            $program = $this->api->getProgramDetail($programId);
         }
 
         $data = [
@@ -77,58 +68,48 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('error', 'Email dan Password wajib diisi.');
         }
 
-        $member = $this->memberModel->where('email', $email)->first();
+        $response = $this->api->login($email, $password);
 
-        if (!$member) {
-            return redirect()->back()->withInput()->with('error', 'Email tidak terdaftar.');
+        if (empty($response['success'])) {
+            return redirect()->back()->withInput()->with('error', $response['message'] ?? 'Login gagal.');
         }
 
-        if ($member['status'] === 'banned') {
-            return redirect()->back()->withInput()->with('error', 'Akun Anda sedang dinonaktifkan / dibanned.');
+        $memberData = $response['data']['member'] ?? [];
+        $profileData = $response['data']['profile'] ?? [];
+        $memberId = $memberData['memberID'] ?? null;
+
+        if (!$memberId) {
+            return redirect()->back()->withInput()->with('error', 'Data member tidak valid.');
         }
-
-        $isValid = MemberModel::verifyPassword($password, $member['password'], $member['salt'] ?? '');
-
-        if (!$isValid) {
-            return redirect()->back()->withInput()->with('error', 'Password yang Anda masukkan salah.');
-        }
-
-        // Update last login
-        $this->memberModel->update($member['memberID'], [
-            'lastlogin' => date('Y-m-d H:i:s')
-        ]);
 
         // Set session
         session()->set([
             'is_logged_in' => true,
-            'member_id'    => $member['memberID'],
-            'member_name'  => $member['fullname'] ?? 'Member',
-            'member_email' => $member['email'],
+            'member_id'    => $memberId,
+            'member_name'  => $memberData['fullname'] ?? 'Member',
+            'member_email' => $memberData['email'] ?? $email,
         ]);
 
         // Auto-enroll if program_id was passed
         if (!empty($programId)) {
-            $program = $this->programModel->find($programId);
-            $redirectUrl = $program && !empty($program['slug']) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
+            $program = $this->api->getProgramDetail($programId);
+            $redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
 
-            // Cek apakah member sudah memiliki no telp di profile
-            $profile = $this->profileModel->where('member_id', $member['memberID'])->first();
-            $memberPhone = trim($profile['phone'] ?? '');
+            $memberPhone = trim($profileData['phone'] ?? '');
 
             if (empty($memberPhone)) {
-                // Jangan langsung daftarkan, kembalikan ke halaman registrasi kelas untuk melengkapi nomor telepon
                 return redirect()->to($redirectUrl)->with('error', 'Silakan lengkapi Nomor WhatsApp / Telepon Anda terlebih dahulu untuk menyelesaikan pendaftaran kelas.');
             }
 
-            $this->enrollmentModel->enrollMember($member['memberID'], $programId);
+            $this->api->enroll($memberId, $programId, $memberPhone);
             return redirect()->to($redirectUrl)->with('success', 'Login berhasil dan Anda telah terdaftar di kelas!');
         }
 
         if (!empty($redirect)) {
-            return redirect()->to($redirect)->with('success', 'Selamat datang kembali, ' . ($member['fullname'] ?? '') . '!');
+            return redirect()->to($redirect)->with('success', 'Selamat datang kembali, ' . ($memberData['fullname'] ?? '') . '!');
         }
 
-        return redirect()->to('/')->with('success', 'Selamat datang kembali, ' . ($member['fullname'] ?? '') . '!');
+        return redirect()->to('/')->with('success', 'Selamat datang kembali, ' . ($memberData['fullname'] ?? '') . '!');
     }
 
     public function attemptRegister()
@@ -163,30 +144,24 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('error', 'Anda harus menyetujui syarat & aturan Datasatu Vocational Learning Center.');
         }
 
-        // Check if email already registered
-        $existing = $this->memberModel->where('email', $email)->first();
-        if ($existing) {
-            return redirect()->back()->withInput()->with('error', 'Email ini sudah terdaftar. Silakan masuk ke tab Login.');
+        $registerData = [
+            'fullname'   => $fullname,
+            'email'      => $email,
+            'phone'      => $phone,
+            'password'   => $password,
+            'newsletter' => $this->request->getPost('newsletter') ? 1 : 0,
+        ];
+
+        $response = $this->api->register($registerData);
+
+        if (empty($response['success'])) {
+            return redirect()->back()->withInput()->with('error', $response['message'] ?? 'Pendaftaran gagal.');
         }
 
-        // Insert member
-        $memberId = $this->memberModel->registerMember([
-            'fullname' => $fullname,
-            'email'    => $email,
-            'password' => $password,
-        ]);
+        $memberData = $response['data']['member'] ?? [];
+        $memberId = $memberData['memberID'] ?? null;
 
-        if (!$memberId) {
-            return redirect()->back()->withInput()->with('error', 'Gagal mendaftarkan akun. Silakan coba kembali.');
-        }
-
-        // Insert profile
-        $this->profileModel->insert([
-            'member_id' => $memberId,
-            'phone'     => $phone,
-        ]);
-
-        // Auto-login
+        // Auto-login session
         session()->set([
             'is_logged_in' => true,
             'member_id'    => $memberId,
@@ -196,8 +171,10 @@ class Auth extends BaseController
 
         // If enrolled directly from a program
         if (!empty($programId)) {
-            $this->enrollmentModel->enrollMember($memberId, $programId);
-            return redirect()->to('/programs/programs_detail?id=' . $programId)->with('success', 'Registrasi berhasil! Anda telah resmi terdaftar di kelas.');
+            $this->api->enroll($memberId, $programId, $phone);
+            $program = $this->api->getProgramDetail($programId);
+            $redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
+            return redirect()->to($redirectUrl)->with('success', 'Registrasi berhasil! Anda telah resmi terdaftar di kelas.');
         }
 
         if (!empty($redirect)) {

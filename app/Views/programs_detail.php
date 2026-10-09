@@ -30,13 +30,21 @@
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-3 px-2">
                 <?= esc($program['name']) ?>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 px-4">
-                <?= esc($program['short_desc'] ?? $program['description']) ?>
-            </p>
+            <?php if (!empty($program['short_desc'])): ?>
+                <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 px-4">
+                    <?= esc($program['short_desc']) ?>
+                </p>
+            <?php endif; ?>
 
             <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 max-w-2xl mx-auto mb-6">
                 <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover">
             </div>
+
+            <?php if (!empty($program['description'])): ?>
+                <div class="max-w-2xl mx-auto text-left text-xs sm:text-sm text-slate-700 leading-relaxed my-6 px-4 prose max-w-none">
+                    <?= $program['description'] ?>
+                </div>
+            <?php endif; ?>
 
             <div class="relative flex py-4 items-center max-w-2xl mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
@@ -50,10 +58,7 @@
 
     <?php $isLoggedIn = session()->get('is_logged_in'); ?>
     <?php if ($isLoggedIn && !empty($program)): ?>
-        <?php 
-            $enrollmentModel = new \App\Models\EnrollmentModel();
-            $alreadyEnrolled = $enrollmentModel->isEnrolled(session('member_id'), $program['id']);
-        ?>
+        <?php $alreadyEnrolled = $alreadyEnrolled ?? false; ?>
 
         <?php if ($alreadyEnrolled): ?>
             <div class="max-w-xl mx-auto my-8 p-6 text-center rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">

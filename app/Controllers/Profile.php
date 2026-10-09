@@ -2,21 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Models\MemberModel;
-use App\Models\ProfileModel;
-use App\Models\EnrollmentModel;
+use App\Services\ApiService;
 
 class Profile extends BaseController
 {
-    protected $memberModel;
-    protected $profileModel;
-    protected $enrollmentModel;
+    protected ApiService $api;
 
     public function __construct()
     {
-        $this->memberModel = new MemberModel();
-        $this->profileModel = new ProfileModel();
-        $this->enrollmentModel = new EnrollmentModel();
+        $this->api = new ApiService();
     }
 
     public function index()
@@ -26,21 +20,16 @@ class Profile extends BaseController
             return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu untuk mengakses profil Anda.');
         }
 
-        $member = $this->memberModel->find($memberId);
-        if (!$member) {
+        $res = $this->api->getProfile($memberId);
+
+        if (empty($res['success']) || empty($res['data']['member'])) {
             session()->destroy();
             return redirect()->to('/login')->with('error', 'Akun member tidak ditemukan.');
         }
 
-        $profile = $this->profileModel->where('member_id', $memberId)->first();
-
-        // Get enrollments
-        $enrollments = $this->enrollmentModel
-            ->select('tblprogram_enrollment.*, tblprogram.name as program_name, tblprogram.slug as program_slug, tblprogram.schedule_info as batch_info, tblprogram.image, tblprogram.price')
-            ->join('tblprogram', 'tblprogram.id = tblprogram_enrollment.program_id', 'left')
-            ->where('tblprogram_enrollment.member_id', $memberId)
-            ->orderBy('tblprogram_enrollment.id', 'DESC')
-            ->findAll();
+        $member = $res['data']['member'];
+        $profile = $res['data']['profile'] ?? null;
+        $enrollments = $res['data']['enrollments'] ?? [];
 
         $data = [
             'title'       => 'Profil Saya — Datasatu VLC',
@@ -71,39 +60,17 @@ class Profile extends BaseController
             return redirect()->back()->with('error', 'Nomor WhatsApp / Telepon tidak boleh kosong.');
         }
 
-        $db = \Config\Database::connect();
-        $db->transBegin();
+        $res = $this->api->updateProfile($memberId, [
+            'fullname' => $fullname,
+            'phone'    => $phone,
+            'address'  => $address,
+        ]);
 
-        try {
-            // Update tblmember.fullname
-            $this->memberModel->update($memberId, [
-                'fullname' => $fullname
-            ]);
-
-            // Update or Insert tblprofile
-            $existingProfile = $this->profileModel->where('member_id', $memberId)->first();
-            if ($existingProfile) {
-                $this->profileModel->update($existingProfile['id'], [
-                    'phone'   => $phone,
-                    'address' => $address
-                ]);
-            } else {
-                $this->profileModel->insert([
-                    'member_id' => $memberId,
-                    'phone'     => $phone,
-                    'address'   => $address
-                ]);
-            }
-
-            $db->transCommit();
-
-            // Update active session name
+        if (!empty($res['success'])) {
             session()->set('member_name', $fullname);
-
             return redirect()->to('/profile')->with('success', 'Data profil Anda berhasil diperbarui.');
-        } catch (\Throwable $e) {
-            $db->transRollback();
-            return redirect()->back()->with('error', 'Terjadi kendala saat menyimpan profil: ' . $e->getMessage());
         }
+
+        return redirect()->back()->with('error', $res['message'] ?? 'Terjadi kendala saat menyimpan profil.');
     }
 }
