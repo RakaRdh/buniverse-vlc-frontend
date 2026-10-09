@@ -12,17 +12,17 @@
     </div>
 </section>
 
-<div class="max-w-4xl mx-auto px-4 py-8 lg:py-12">
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
     <!-- Flash Messages -->
     <?php if (session()->getFlashdata('error')): ?>
-        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold flex items-center gap-2">
+        <div class="w-full mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold flex items-center gap-2">
             <i data-lucide="alert-circle" class="size-4 shrink-0 text-red-500"></i>
             <span><?= esc(session()->getFlashdata('error')) ?></span>
         </div>
     <?php endif; ?>
 
     <?php if (session()->getFlashdata('success')): ?>
-        <div class="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2">
+        <div class="w-full mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2">
             <i data-lucide="check-circle-2" class="size-4 shrink-0 text-emerald-500"></i>
             <span><?= esc(session()->getFlashdata('success')) ?></span>
         </div>
@@ -34,7 +34,7 @@
                 <img src="/img/logo-vocational.webp" alt="Datasatu Vocational Learning Center" class="h-10 object-contain">
             </div>
 
-            <div class="relative flex py-4 items-center max-w-2xl mx-auto">
+            <div class="relative flex py-4 items-center w-full mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
                     <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
@@ -42,26 +42,26 @@
                 <div class="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-3 px-2">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-3 px-2 leading-tight">
                 <?= esc($program['name']) ?>
             </h2>
             <?php if (!empty($program['short_desc'])): ?>
-                <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 px-4">
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 px-2">
                     <?= esc($program['short_desc']) ?>
                 </p>
             <?php endif; ?>
 
-            <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 max-w-2xl mx-auto mb-6">
+            <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 w-full mb-6">
                 <img src="<?= esc($program['image'] ?: '/img/img-course-1.webp') ?>" alt="<?= esc($program['name']) ?>" class="w-full object-cover">
             </div>
 
             <?php if (!empty($program['description'])): ?>
-                <div class="max-w-2xl mx-auto text-left text-xs sm:text-sm text-slate-700 leading-relaxed my-6 px-4 prose max-w-none">
+                <div class="w-full text-left text-xs sm:text-sm text-slate-700 leading-relaxed my-6 prose max-w-none">
                     <?= $program['description'] ?>
                 </div>
             <?php endif; ?>
 
-            <div class="relative flex py-4 items-center max-w-2xl mx-auto">
+            <div class="relative flex py-4 items-center w-full mx-auto">
                 <div class="flex-grow border-t border-slate-200"></div>
                 <span class="flex-shrink mx-4">
                     <img src="/img/logo-vlc-white.webp" alt="VLC" class="h-7 w-auto opacity-75">
@@ -80,7 +80,7 @@
 
             <?php if ($eStatus === 'waiting' || $eStatus === 'enrolled'): ?>
                 <!-- Status Waiting: Menunggu Verifikasi Admin -->
-                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-sm">
+                <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-amber-50/80 border border-amber-200/90 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-amber-100 text-amber-600 items-center justify-center mb-3">
                         <i data-lucide="clock" class="size-6"></i>
                     </div>
@@ -100,7 +100,7 @@
                 </div>
             <?php elseif ($eStatus === 'contacted'): ?>
                 <!-- Status Contacted -->
-                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-sky-50/90 border border-sky-200 shadow-sm">
+                <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-sky-50/90 border border-sky-200 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-sky-100 text-sky-600 items-center justify-center mb-3">
                         <i data-lucide="message-circle" class="size-6"></i>
                     </div>
@@ -120,7 +120,7 @@
                 </div>
             <?php elseif ($eStatus === 'active' || $eStatus === 'in_progress'): ?>
                 <!-- Status Active: Terverifikasi -->
-                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
                         <i data-lucide="check-circle-2" class="size-6"></i>
                     </div>
@@ -140,7 +140,7 @@
                 </div>
             <?php elseif ($eStatus === 'finished'): ?>
                 <!-- Status Finished -->
-                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
+                <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-emerald-50/90 border border-emerald-200 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center mb-3">
                         <i data-lucide="award" class="size-6"></i>
                     </div>
@@ -160,13 +160,13 @@
                 </div>
             <?php elseif ($eStatus === 'rejected'): ?>
                 <!-- Status Rejected -->
-                <div class="max-w-xl mx-auto my-8 p-6 md:p-8 text-center rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
+                <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
                         <i data-lucide="x-circle" class="size-6"></i>
                     </div>
-                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Verifikasi Pendaftaran Belum Disetujui</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Pendaftaran Ditolak</h3>
                     <p class="text-xs sm:text-sm text-rose-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
-                        Mohon maaf, pendaftaran Anda untuk batch program ini belum dapat disetujui (kuota telah penuh atau batas verifikasi 3 hari telah berakhir). Silakan memilih kelas lainnya di katalog kami.
+                        Mohon maaf, pendaftaran Anda untuk program pelatihan ini telah ditolak oleh admin. Anda tidak dapat lagi mendaftar pada program ini. Silakan melihat pilihan program lainnya di katalog kami.
                     </p>
                     <div class="mt-5">
                         <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
@@ -176,7 +176,7 @@
                 </div>
             <?php endif; ?>
         <?php else: ?>
-            <div class="max-w-xl mx-auto my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <div class="w-full my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
                 <?php if (empty($memberPhone)): ?>
                     <div class="mb-5 pb-4 border-b border-slate-100 text-left">
                         <div class="flex items-center gap-2.5 text-[#C41E24] mb-1.5 font-bold text-sm">
@@ -235,7 +235,7 @@
 
     <?php else: ?>
         <!-- State: User belum login - tampilkan CTA button dan notes -->
-        <div class="max-w-xl mx-auto my-10 p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
+        <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
             <div class="flex flex-col items-center justify-center">
                 <a href="/login?program_id=<?= esc($program['id'] ?? '') ?>"
                    class="inline-block bg-[#FF8D28] hover:bg-[#e07212] text-white text-base font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">

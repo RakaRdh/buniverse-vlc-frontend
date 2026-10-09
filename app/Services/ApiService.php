@@ -235,6 +235,18 @@ class ApiService
     }
 
     /**
+     * POST /api/auth/check-email
+     */
+    public function checkEmail(string $email): array
+    {
+        return $this->request('POST', 'auth/check-email', [
+            'form_params' => [
+                'email' => $email,
+            ],
+        ]);
+    }
+
+    /**
      * GET /api/profile/(:num) (Never cached - real-time member account state)
      */
     public function getProfile($memberId): array

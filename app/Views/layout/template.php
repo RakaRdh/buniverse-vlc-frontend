@@ -62,6 +62,15 @@
         body, * { 
             font-family: 'Nunito Sans', sans-serif !important; 
         }
+        /* Cegah triple-click accidental text highlight pada UI controls */
+        button, label, nav, [role="button"], .select-none {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        input, textarea {
+            user-select: text;
+            -webkit-user-select: text;
+        }
     </style>
 </head>
 <body class="text-gray-800 bg-white antialiased selection:bg-brand selection:text-white overflow-x-hidden w-full relative">

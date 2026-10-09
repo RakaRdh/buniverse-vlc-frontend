@@ -71,22 +71,25 @@
                             <?php foreach ($enrollments as $en): ?>
                                 <?php
                                     $statusBadge = match($en['status']) {
-                                        'finished'    => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                        'in_progress' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                                        'contacted'   => 'bg-sky-50 text-sky-700 border-sky-200',
-                                        default       => 'bg-amber-50 text-amber-700 border-amber-200'
+                                        'finished'              => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'active', 'in_progress' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'contacted'             => 'bg-sky-50 text-sky-700 border-sky-200',
+                                        'rejected'              => 'bg-rose-50 text-rose-700 border-rose-200',
+                                        default                 => 'bg-amber-50 text-amber-700 border-amber-200'
                                     };
                                     $statusTitle = match($en['status']) {
-                                        'finished'    => 'Finished (Selesai)',
-                                        'in_progress' => 'In Progress (Sedang Belajar)',
-                                        'contacted'   => 'Contacted (Sudah Dihubungi)',
-                                        default       => 'Enrolled (Pendaftaran Diterima)'
+                                        'finished'              => 'Finished (Selesai)',
+                                        'active', 'in_progress' => 'Active (Terverifikasi)',
+                                        'contacted'             => 'Contacted (Sedang Dihubungi)',
+                                        'rejected'              => 'Rejected (Belum Disetujui)',
+                                        default                 => 'Waiting (Menunggu Verifikasi)'
                                     };
                                     $statusDesc = match($en['status']) {
-                                        'finished'    => 'Selamat! Anda telah menyelesaikan seluruh rangkaian materi kelas ini.',
-                                        'in_progress' => 'Kelas sedang berlangsung. Silakan ikuti sesi materi sesuai jadwal.',
-                                        'contacted'   => 'Admin VLC telah menghubungi nomor telepon Anda. Silakan tunggu jadwal pembukaan kelas.',
-                                        default       => 'Pendaftaran terkirim! Tim admin VLC akan segera menghubungi WhatsApp/telepon Anda untuk konfirmasi & info kelas.'
+                                        'finished'              => 'Selamat! Anda telah menyelesaikan seluruh rangkaian program pelatihan vokasi ini.',
+                                        'active', 'in_progress' => 'Pendaftaran Anda telah terverifikasi oleh admin. Anda resmi terdaftar sebagai peserta aktif di kelas ini.',
+                                        'contacted'             => 'Tim admin VLC telah menghubungi nomor WhatsApp Anda untuk koordinasi jadwal kelas dan rincian administratif.',
+                                        'rejected'              => 'Mohon maaf, pendaftaran Anda untuk kelas ini belum disetujui (kuota penuh atau batas verifikasi 3 hari telah berakhir). Silakan memilih kelas lainnya.',
+                                        default                 => 'Pendaftaran terkirim dan sedang dalam antrean verifikasi admin (estimasi 1–3 hari kerja). Konfirmasi akan dikirimkan ke email dan nomor WhatsApp Anda.'
                                     };
                                 ?>
                                 <div class="rounded-2xl border border-slate-200 p-4 sm:p-5 hover:border-slate-300 transition-colors bg-white">
@@ -116,9 +119,15 @@
 
                                     <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
                                         <span>Terdaftar: <strong class="text-slate-700"><?= esc(substr($en['enrolled_at'] ?? $en['created_at'], 0, 16)) ?></strong></span>
-                                        <a href="/programs/detail/<?= esc($en['program_slug']) ?>" class="font-bold text-[#C41E24] hover:underline">
-                                            Detail Silabus &rarr;
-                                        </a>
+                                        <?php if ($en['status'] === 'rejected'): ?>
+                                            <a href="/programs" class="font-bold text-[#C41E24] hover:underline">
+                                                Lihat Kelas Lainnya &rarr;
+                                            </a>
+                                        <?php else: ?>
+                                            <a href="/programs/detail/<?= esc($en['program_slug']) ?>" class="font-bold text-[#C41E24] hover:underline">
+                                                Detail Silabus &rarr;
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

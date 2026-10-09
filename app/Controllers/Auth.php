@@ -197,6 +197,27 @@ class Auth extends BaseController
         return redirect()->back()->with('error', $res['message'] ?? 'Gagal mengirim ulang tautan verifikasi.');
     }
 
+    public function checkEmail()
+    {
+        $email = strtolower(trim($this->request->getVar('email') ?? ''));
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'exists'  => false,
+                'message' => 'Format email tidak valid.'
+            ]);
+        }
+
+        $res = $this->api->checkEmail($email);
+        $exists = !empty($res['data']['exists']);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'exists'  => $exists,
+            'message' => !empty($res['message']) ? $res['message'] : ($exists ? 'Email sudah terdaftar.' : 'Email tersedia.')
+        ]);
+    }
+
     public function logout()
     {
         session()->remove(['is_logged_in', 'member_id', 'member_name', 'member_email']);

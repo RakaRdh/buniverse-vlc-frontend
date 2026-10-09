@@ -162,6 +162,18 @@ class Home extends BaseController
 
 		$postedPhone = trim($this->request->getPost('phone') ?? '');
 
+		// Check if already rejected or enrolled
+		$existingEnrollments = $this->api->getMemberEnrollments($memberId);
+		if (!empty($existingEnrollments)) {
+			foreach ($existingEnrollments as $e) {
+				if ((int)$e['program_id'] === (int)$programId) {
+					if ($e['status'] === 'rejected') {
+						return redirect()->to($redirectUrl)->with('error', 'Pendaftaran Anda untuk program pelatihan ini telah ditolak oleh admin dan tidak dapat mendaftar kembali pada program ini.');
+					}
+				}
+			}
+		}
+
 		// Call REST API to enroll
 		$response = $this->api->enroll($memberId, $programId, $postedPhone);
 
