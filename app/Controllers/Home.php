@@ -168,4 +168,36 @@ class Home extends BaseController
 
 		return redirect()->to($redirectUrl)->withInput()->with('error', $response['message'] ?? 'Gagal mendaftar kelas.');
 	}
+
+	/**
+	 * Cache Invalidation Endpoint (triggered by CMS webhook or manually)
+	 * Route: api/clear-cache
+	 */
+	public function clearCache()
+	{
+		$this->api->clearDataCache();
+
+		// Optional: clear file uploads disk cache if clean_uploads parameter sent
+		$cleanUploads = $this->request->getVar('clean_uploads');
+		if (!empty($cleanUploads)) {
+			$cacheDir = WRITEPATH . 'cache/uploads/';
+			if (is_dir($cacheDir)) {
+				$files = new \RecursiveIteratorIterator(
+					new \RecursiveDirectoryIterator($cacheDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+					\RecursiveIteratorIterator::CHILD_FIRST
+				);
+				foreach ($files as $fileinfo) {
+					if ($fileinfo->isFile()) {
+						@unlink($fileinfo->getRealPath());
+					}
+				}
+			}
+		}
+
+		return $this->response->setJSON([
+			'success'   => true,
+			'message'   => 'Frontend cache cleared successfully.',
+			'timestamp' => date('Y-m-d H:i:s'),
+		]);
+	}
 }

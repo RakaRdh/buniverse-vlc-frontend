@@ -41,6 +41,12 @@ $routes->get('logout', 'Auth::logout');
 $routes->get('profile', 'Profile::index');
 $routes->post('profile/update', 'Profile::update');
 
+// Media Reverse-Proxy & Disk Caching (Pola IDS)
+$routes->get('uploads/(:any)', 'MediaController::serve/$1');
+
+// Cache Invalidation Webhook (Triggered by CMS)
+$routes->match(['get', 'post'], 'api/clear-cache', 'Home::clearCache');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
