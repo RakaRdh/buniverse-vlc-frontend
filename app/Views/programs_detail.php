@@ -232,8 +232,7 @@
                 <?php endif; ?>
             </div>
         <?php endif; ?>
-
-    <?php else: ?>
+    <?php elseif (!empty($program)): ?>
         <!-- State: User belum login - tampilkan CTA button dan notes -->
         <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
             <div class="flex flex-col items-center justify-center">
@@ -245,6 +244,22 @@
                     Silahkan login menggunakan akun Datasatu, atau buat akun baru sekarang!*
                 </p>
             </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (empty($program)): ?>
+        <!-- State: Program Kosong / Tidak Ditemukan -->
+        <div class="w-full my-8 p-8 sm:p-12 text-center rounded-3xl bg-white border border-dashed border-slate-200 shadow-sm">
+            <div class="inline-flex size-16 rounded-full bg-slate-100 text-slate-400 items-center justify-center mb-4">
+                <i data-lucide="book-x" class="size-8"></i>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2">Belum Ada Program Tersedia</h3>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
+                Program pelatihan yang Anda cari saat ini belum tersedia atau sedang dalam proses pembaruan. Silakan kembali lagi nanti atau jelajahi program lainnya.
+            </p>
+            <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs sm:text-sm font-semibold py-3 px-8 rounded-full shadow-md transition">
+                Lihat Daftar Program
+            </a>
         </div>
     <?php endif; ?>
 </div>

@@ -18,6 +18,7 @@ class ProgramModel extends Model
         'image',
         'price',
         'duration',
+        'modules',
         'schedule_info',
         'max_participants',
         'has_certificate',
@@ -56,7 +57,9 @@ class ProgramModel extends Model
             ->getResultArray();
 
         $program['modules'] = $modules;
-        $program['modules_count'] = count($modules);
+        $program['modules_count'] = (!empty($program['modules']) && (int)$program['modules'] > 0)
+            ? (int)$program['modules']
+            : count($modules);
         return $program;
     }
 }

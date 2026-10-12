@@ -21,8 +21,14 @@
 <section class="relative bg-white font-poppins lg:px-[80px] px-[16px] lg:pt-[88px] pt-[40px] lg:pb-[120px] pb-[40px]">
     <div class="lg:max-w-[1440px] w-full mx-auto">
         <?php if (empty($programs)): ?>
-            <div class="text-center py-16 text-gray-500">
-                <p>Belum ada program pelatihan aktif saat ini.</p>
+            <div class="text-center py-16 px-4 max-w-lg mx-auto rounded-3xl border border-dashed border-gray-300 bg-gray-50/50">
+                <div class="inline-flex size-14 rounded-full bg-orange-100 text-orange-600 items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-1">Belum Ada Program Aktif</h3>
+                <p class="text-xs sm:text-sm text-gray-500">Saat ini belum ada program pelatihan aktif yang dibuka. Silakan cek kembali secara berkala.</p>
             </div>
         <?php else: ?>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
