@@ -74,6 +74,7 @@
                                         'finished'              => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                                         'active', 'in_progress' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                                         'contacted'             => 'bg-sky-50 text-sky-700 border-sky-200',
+                                        'banned'                => 'bg-red-100 text-red-800 border-red-300 font-extrabold',
                                         'rejected'              => 'bg-rose-50 text-rose-700 border-rose-200',
                                         default                 => 'bg-amber-50 text-amber-700 border-amber-200'
                                     };
@@ -81,6 +82,7 @@
                                         'finished'              => 'Finished (Selesai)',
                                         'active', 'in_progress' => 'Active (Terverifikasi)',
                                         'contacted'             => 'Contacted (Sedang Dihubungi)',
+                                        'banned'                => 'Banned (Akses Diblokir)',
                                         'rejected'              => 'Rejected (Belum Disetujui)',
                                         default                 => 'Waiting (Menunggu Verifikasi)'
                                     };
@@ -88,7 +90,8 @@
                                         'finished'              => 'Selamat! Anda telah menyelesaikan seluruh rangkaian program pelatihan vokasi ini.',
                                         'active', 'in_progress' => 'Pendaftaran Anda telah terverifikasi oleh admin. Anda resmi terdaftar sebagai peserta aktif di kelas ini.',
                                         'contacted'             => 'Tim admin VLC telah menghubungi nomor WhatsApp Anda untuk koordinasi jadwal kelas dan rincian administratif.',
-                                        'rejected'              => 'Mohon maaf, pendaftaran Anda untuk kelas ini belum disetujui (kuota penuh atau batas verifikasi 3 hari telah berakhir). Silakan memilih kelas lainnya.',
+                                        'banned'                => 'Akses Anda untuk program pelatihan ini telah diblokir (Banned) oleh administrator.',
+                                        'rejected'              => 'Pendaftaran sebelumnya belum disetujui. Anda tetap dapat mencoba mengajukan pendaftaran kembali pada program ini.',
                                         default                 => 'Pendaftaran terkirim dan sedang dalam antrean verifikasi admin (estimasi 1–3 hari kerja). Konfirmasi akan dikirimkan ke email dan nomor WhatsApp Anda.'
                                     };
                                 ?>

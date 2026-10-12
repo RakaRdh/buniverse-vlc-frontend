@@ -158,15 +158,15 @@
                         </a>
                     </div>
                 </div>
-            <?php elseif ($eStatus === 'rejected'): ?>
-                <!-- Status Rejected -->
+            <?php elseif ($eStatus === 'banned'): ?>
+                <!-- Status Banned -->
                 <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
                     <div class="inline-flex size-12 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
-                        <i data-lucide="x-circle" class="size-6"></i>
+                        <i data-lucide="shield-alert" class="size-6"></i>
                     </div>
-                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Pendaftaran Ditolak</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-rose-950">Akses Program Diblokir (Banned)</h3>
                     <p class="text-xs sm:text-sm text-rose-800/90 max-w-md mx-auto mt-1.5 leading-relaxed">
-                        Mohon maaf, pendaftaran Anda untuk program pelatihan ini telah ditolak oleh admin. Anda tidak dapat lagi mendaftar pada program ini. Silakan melihat pilihan program lainnya di katalog kami.
+                        Akun Anda telah dinonaktifkan / diblokir dari program pelatihan ini oleh tim admin sehingga Anda tidak dapat mendaftar kembali pada program ini.
                     </p>
                     <div class="mt-5">
                         <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
@@ -177,7 +177,22 @@
             <?php endif; ?>
         <?php else: ?>
             <div class="w-full my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <?php if (empty($memberPhone)): ?>
+                <?php if (!empty($program['is_full'])): ?>
+                    <div class="text-center py-6">
+                        <div class="inline-flex size-14 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
+                            <i data-lucide="users" class="size-7"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-rose-950 mb-1">Kuota Peserta Telah Penuh</h3>
+                        <p class="text-xs sm:text-sm text-rose-800/90 max-w-md mx-auto leading-relaxed">
+                            Mohon maaf, kapasitas maksimal kelas ini (<?= (int)($program['max_participants'] ?? 0) ?> peserta) telah terpenuhi. Silakan ikuti batch selanjutnya atau pilih kelas lainnya.
+                        </p>
+                        <div class="mt-5">
+                            <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs font-bold py-2.5 px-8 rounded-full shadow-sm transition">
+                                Lihat Kelas Lainnya &rarr;
+                            </a>
+                        </div>
+                    </div>
+                <?php elseif (empty($memberPhone)): ?>
                     <div class="mb-5 pb-4 border-b border-slate-100 text-left">
                         <div class="flex items-center gap-2.5 text-[#C41E24] mb-1.5 font-bold text-sm">
                             <i data-lucide="alert-circle" class="size-4 shrink-0"></i>
@@ -235,15 +250,27 @@
     <?php elseif (!empty($program)): ?>
         <!-- State: User belum login - tampilkan CTA button dan notes -->
         <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <div class="flex flex-col items-center justify-center">
-                <a href="/login?program_id=<?= esc($program['id'] ?? '') ?>"
-                   class="inline-block bg-[#FF8D28] hover:bg-[#e07212] text-white text-base font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
-                    Daftar Sekarang
-                </a>
-                <p class="text-xs text-slate-500 mt-3.5 font-medium">
-                    Silahkan login menggunakan akun Datasatu, atau buat akun baru sekarang!*
-                </p>
-            </div>
+            <?php if (!empty($program['is_full'])): ?>
+                <div class="flex flex-col items-center justify-center">
+                    <button type="button" disabled
+                            class="bg-gray-300 text-gray-500 text-base font-bold py-3.5 px-14 rounded-full shadow-none cursor-not-allowed select-none opacity-80">
+                        Kuota Penuh
+                    </button>
+                    <p class="text-xs text-rose-500 mt-3.5 font-medium">
+                        Kapasitas peserta untuk program ini telah mencapai batas maksimal.*
+                    </p>
+                </div>
+            <?php else: ?>
+                <div class="flex flex-col items-center justify-center">
+                    <a href="/login?program_id=<?= esc($program['id'] ?? '') ?>"
+                       class="inline-block bg-[#FF8D28] hover:bg-[#e07212] text-white text-base font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
+                        Daftar Sekarang
+                    </a>
+                    <p class="text-xs text-slate-500 mt-3.5 font-medium">
+                        Silahkan login menggunakan akun Datasatu, atau buat akun baru sekarang!*
+                    </p>
+                </div>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 

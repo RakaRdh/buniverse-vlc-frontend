@@ -20,17 +20,30 @@ class Home extends BaseController
 
 		foreach ($dbPrograms as $p) {
 			$details = $this->api->getProgramDetail($p['id']);
+			$rawPrice = $details['price'] ?? $p['price'] ?? null;
+			$priceVal = ($rawPrice !== null && $rawPrice !== '') ? (float)$rawPrice : null;
+			$priceFormatted = null;
+			if ($priceVal !== null) {
+				$priceFormatted = $priceVal > 0 ? 'Rp ' . number_format($priceVal, 0, ',', '.') : 'Gratis';
+			}
+			$isFull = !empty($details['is_full']) || !empty($p['is_full']);
+
 			$courses[] = [
-				'id'              => $p['id'],
-				'slug'            => $p['slug'],
-				'image'           => base_url($p['image'] ?: 'img/img-course-1.webp'),
-				'name'            => $p['name'],
-				'title'           => $p['name'],
-				'about'           => $p['short_desc'] ?? $p['description'],
-				'duration'        => $p['duration'] ?? '3 Hari',
-				'modules_count'   => ($details['modules_count'] ?? $p['modules_count'] ?? 0) . ' modul',
-				'has_video'       => '1 video',
-				'has_certificate' => !empty($p['has_certificate']) ? 'Sertifikat' : '',
+				'id'                      => $p['id'],
+				'slug'                    => $p['slug'],
+				'image'                   => base_url($p['image'] ?: 'img/img-course-1.webp'),
+				'name'                    => $p['name'],
+				'title'                   => $p['name'],
+				'about'                   => $p['short_desc'] ?? $p['description'],
+				'duration'                => $p['duration'] ?? '3 Hari',
+				'modules_count'           => ($details['modules_count'] ?? $p['modules_count'] ?? 0) . ' modul',
+				'has_video'               => '1 video',
+				'has_certificate'         => !empty($p['has_certificate']) ? 'Sertifikat' : '',
+				'price'                   => $priceVal,
+				'price_formatted'         => $priceFormatted,
+				'is_full'                 => $isFull,
+				'max_participants'        => $details['max_participants'] ?? $p['max_participants'] ?? null,
+				'active_participants_count' => $details['active_participants_count'] ?? $p['active_participants_count'] ?? 0,
 			];
 		}
 
@@ -46,7 +59,10 @@ class Home extends BaseController
 					'duration'        => "3 Hari",
 					'modules_count'   => "4 modul",
 					'has_video'       => "1 video",
-					'has_certificate' => "Sertifikat"
+					'has_certificate' => "Sertifikat",
+					'price'           => 0,
+					'price_formatted' => "Gratis",
+					'is_full'         => false,
 				],
 			];
 		}
@@ -133,8 +149,10 @@ class Home extends BaseController
 			if (!empty($enrollments) && !empty($program['id'])) {
 				foreach ($enrollments as $e) {
 					if ((int)$e['program_id'] === (int)$program['id']) {
-						$alreadyEnrolled = true;
 						$currentEnrollment = $e;
+						if ($e['status'] !== 'rejected') {
+							$alreadyEnrolled = true;
+						}
 						break;
 					}
 				}
@@ -162,13 +180,13 @@ class Home extends BaseController
 
 		$postedPhone = trim($this->request->getPost('phone') ?? '');
 
-		// Check if already rejected or enrolled
+		// Check if already banned
 		$existingEnrollments = $this->api->getMemberEnrollments($memberId);
 		if (!empty($existingEnrollments)) {
 			foreach ($existingEnrollments as $e) {
 				if ((int)$e['program_id'] === (int)$programId) {
-					if ($e['status'] === 'rejected') {
-						return redirect()->to($redirectUrl)->with('error', 'Pendaftaran Anda untuk program pelatihan ini telah ditolak oleh admin dan tidak dapat mendaftar kembali pada program ini.');
+					if ($e['status'] === 'banned') {
+						return redirect()->to($redirectUrl)->with('error', 'Akun Anda telah diblokir (Banned) dari program pelatihan ini dan tidak dapat mendaftar kembali.');
 					}
 				}
 			}
