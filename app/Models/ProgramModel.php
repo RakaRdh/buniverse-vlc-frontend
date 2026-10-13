@@ -50,16 +50,20 @@ class ProgramModel extends Model
             return null;
         }
 
+        $manualModules = (!empty($program['modules']) && is_numeric($program['modules']) && (int)$program['modules'] > 0)
+            ? (int)$program['modules']
+            : 0;
+
         $modules = $this->db->table('tblprogram_module')
             ->where('program_id', $program['id'])
             ->orderBy('sort_order', 'ASC')
             ->get()
             ->getResultArray();
 
+        $program['manual_modules'] = $manualModules;
+        $program['modules_items'] = $modules;
         $program['modules'] = $modules;
-        $program['modules_count'] = (!empty($program['modules']) && (int)$program['modules'] > 0)
-            ? (int)$program['modules']
-            : count($modules);
+        $program['modules_count'] = $manualModules > 0 ? $manualModules : count($modules);
 
         // Hitung peserta aktif
         $activeCount = $this->db->table('tblprogram_enrollment')

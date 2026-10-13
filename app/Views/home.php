@@ -152,19 +152,17 @@
                 <div
                     class="w-[82vw] max-w-[320px] sm:w-[320px] md:w-[340px] shrink-0 sm:shrink snap-center bg-white text-gray-800 rounded-2xl overflow-hidden text-left shadow-2xl flex flex-col justify-between">
                     <div>
-                        <a href="/programs/detail/<?= esc($course['slug']) ?>"
-                            class="block h-40 sm:h-44 bg-gray-200 relative overflow-hidden group">
+                        <div class="block h-40 sm:h-44 bg-gray-200 relative overflow-hidden">
                             <img src="<?= esc($course['image'] ?? '/img/img-course-1.webp') ?>"
                                 alt="<?= esc($course['title']) ?>"
-                                class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                                class="w-full h-full object-cover"
                                 onerror="this.src='/img/img-course-1.webp'">
-                        </a>
+                        </div>
 
                         <div class="p-5 pb-4">
-                            <a href="/programs/detail/<?= esc($course['slug']) ?>"
-                                class="block font-bold text-sm sm:text-base mb-2 text-slate-900 hover:text-[#C41E24] leading-snug transition">
+                            <h3 class="font-bold text-sm sm:text-base mb-2 text-slate-900 leading-snug">
                                 <?= esc($course['title']) ?>
-                            </a>
+                            </h3>
                             <ul class="text-xs text-gray-600 space-y-1.5 mb-4 list-disc list-inside">
                                 <li>Durasi: <?= esc($course['duration'] ?? '3 Hari') ?></li>
                                 <?php if (!empty($course['modules_count']) && (int)$course['modules_count'] > 0): ?>
@@ -180,7 +178,7 @@
                         <!-- Price Tag (Hanya tampil jika harga diisi oleh admin) -->
                         <?php if (!empty($course['price_formatted'])): ?>
                             <div class="mb-3 text-left">
-                                <span class="text-[11px] text-gray-500 block font-medium">Investasi Kelas</span>
+                                <span class="text-[11px] text-gray-500 block font-medium">Harga Kelas</span>
                                 <span class="text-base sm:text-lg font-extrabold text-[#C41E24]">
                                     <?= esc($course['price_formatted']) ?>
                                 </span>
@@ -191,13 +189,13 @@
                             <p class="text-[10px] text-center text-red-500 font-semibold mb-3">Kapasitas peserta penuh. Klik
                                 untuk lihat detail.</p>
                             <a href="/programs/detail/<?= esc($course['slug']) ?>"
-                                class="block w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-full shadow-xs transition"
+                                class="block w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-full shadow-xs transition-colors duration-150"
                                 title="Lihat Detail Program">
                                 Detail Kelas
                             </a>
                         <?php else: ?>
                             <a href="/programs/detail/<?= esc($course['slug']) ?>"
-                                class="block w-full text-center bg-[#FF8D28] text-white font-bold py-3 rounded-full shadow-sm transition">
+                                class="block w-full text-center bg-[#FF8D28] hover:bg-[#E67817] text-white font-bold py-3 rounded-full shadow-sm transition-colors duration-150">
                                 Daftar Kelas
                             </a>
                         <?php endif; ?>

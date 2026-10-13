@@ -142,9 +142,7 @@ class ApiService
         if (!empty($bundle['programs'])) {
             foreach ($bundle['programs'] as $p) {
                 if ((string)$p['id'] === (string)$slugOrId || (!empty($p['slug']) && $p['slug'] === $slugOrId)) {
-                    if (!empty($p['modules'])) {
-                        return $p;
-                    }
+                    return $p;
                 }
             }
         }

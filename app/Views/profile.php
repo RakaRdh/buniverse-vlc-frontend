@@ -123,7 +123,7 @@
                                     <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
                                         <span>Terdaftar: <strong class="text-slate-700"><?= esc(substr($en['enrolled_at'] ?? $en['created_at'], 0, 16)) ?></strong></span>
                                         <?php if ($en['status'] === 'rejected'): ?>
-                                            <a href="/programs" class="font-bold text-[#C41E24] hover:underline">
+                                            <a href="/#courses" class="font-bold text-[#C41E24] hover:underline">
                                                 Lihat Kelas Lainnya &rarr;
                                             </a>
                                         <?php else: ?>

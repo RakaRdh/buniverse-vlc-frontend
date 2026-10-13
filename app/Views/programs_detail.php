@@ -93,7 +93,7 @@
                             Lihat Status di Profil &rarr;
                         </a>
                         <span class="text-slate-300">&bull;</span>
-                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                        <a href="/#courses" class="text-slate-600 hover:text-slate-900 hover:underline">
                             Lihat Kelas Lainnya
                         </a>
                     </div>
@@ -113,7 +113,7 @@
                             Lihat Status di Profil &rarr;
                         </a>
                         <span class="text-slate-300">&bull;</span>
-                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                        <a href="/#courses" class="text-slate-600 hover:text-slate-900 hover:underline">
                             Lihat Kelas Lainnya
                         </a>
                     </div>
@@ -133,7 +133,7 @@
                             Lihat Status di Profil &rarr;
                         </a>
                         <span class="text-slate-300">&bull;</span>
-                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                        <a href="/#courses" class="text-slate-600 hover:text-slate-900 hover:underline">
                             Lihat Kelas Lainnya
                         </a>
                     </div>
@@ -153,7 +153,7 @@
                             Lihat Status di Profil &rarr;
                         </a>
                         <span class="text-slate-300">&bull;</span>
-                        <a href="/programs" class="text-slate-600 hover:text-slate-900 hover:underline">
+                        <a href="/#courses" class="text-slate-600 hover:text-slate-900 hover:underline">
                             Lihat Kelas Lainnya
                         </a>
                     </div>
@@ -169,7 +169,7 @@
                         Akun Anda telah dinonaktifkan / diblokir dari program pelatihan ini oleh tim admin sehingga Anda tidak dapat mendaftar kembali pada program ini.
                     </p>
                     <div class="mt-5">
-                        <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
+                        <a href="/#courses" class="inline-block bg-[#C41E24] hover:bg-[#a8151a] text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-sm transition">
                             Lihat Pilihan Kelas Lainnya &rarr;
                         </a>
                     </div>
@@ -187,7 +187,7 @@
                             Mohon maaf, kapasitas maksimal kelas ini (<?= (int)($program['max_participants'] ?? 0) ?> peserta) telah terpenuhi. Silakan ikuti batch selanjutnya atau pilih kelas lainnya.
                         </p>
                         <div class="mt-5">
-                            <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs font-bold py-2.5 px-8 rounded-full shadow-sm transition">
+                            <a href="/#courses" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs font-bold py-2.5 px-8 rounded-full shadow-sm transition">
                                 Lihat Kelas Lainnya &rarr;
                             </a>
                         </div>
@@ -284,7 +284,7 @@
             <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
                 Program pelatihan yang Anda cari saat ini belum tersedia atau sedang dalam proses pembaruan. Silakan kembali lagi nanti atau jelajahi program lainnya.
             </p>
-            <a href="/programs" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs sm:text-sm font-semibold py-3 px-8 rounded-full shadow-md transition">
+            <a href="/#courses" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs sm:text-sm font-semibold py-3 px-8 rounded-full shadow-md transition">
                 Lihat Daftar Program
             </a>
         </div>
