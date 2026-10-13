@@ -65,11 +65,14 @@ class ProgramModel extends Model
         $program['modules'] = $modules;
         $program['modules_count'] = $manualModules > 0 ? $manualModules : count($modules);
 
-        // Hitung peserta aktif
-        $activeCount = $this->db->table('tblprogram_enrollment')
+        // Hitung peserta aktif (distinct member)
+        $activeCountRow = $this->db->table('tblprogram_enrollment')
+            ->select('COUNT(DISTINCT member_id) as total')
             ->where('program_id', $program['id'])
             ->whereIn('status', ['active', 'in_progress'])
-            ->countAllResults();
+            ->get()
+            ->getRow();
+        $activeCount = !empty($activeCountRow) ? (int)$activeCountRow->total : 0;
         $program['active_participants_count'] = $activeCount;
         $maxCap = !empty($program['max_participants']) ? (int)$program['max_participants'] : 0;
         $program['is_full'] = ($maxCap > 0 && $activeCount >= $maxCap);
