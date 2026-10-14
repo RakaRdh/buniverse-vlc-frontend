@@ -11,19 +11,19 @@
 
 (function (window) {
     const VLC_PHONE_COUNTRIES = [
-        { code: '62', dial: '+62', flag: '🇮🇩', name: 'Indonesia', format: [3, 4, 4], min: 9, max: 13, stripZero: true },
-        { code: '60', dial: '+60', flag: '🇲🇾', name: 'Malaysia', format: [2, 3, 4], min: 9, max: 10, stripZero: true },
-        { code: '65', dial: '+65', flag: '🇸🇬', name: 'Singapore', format: [4, 4], min: 8, max: 8, stripZero: false },
-        { code: '66', dial: '+66', flag: '🇹🇭', name: 'Thailand', format: [2, 3, 4], min: 9, max: 9, stripZero: true },
-        { code: '63', dial: '+63', flag: '🇵🇭', name: 'Philippines', format: [3, 3, 4], min: 10, max: 10, stripZero: true },
-        { code: '91', dial: '+91', flag: '🇮🇳', name: 'India', format: [5, 5], min: 10, max: 10, stripZero: false },
-        { code: '81', dial: '+81', flag: '🇯🇵', name: 'Japan', format: [2, 4, 4], min: 10, max: 11, stripZero: true },
-        { code: '82', dial: '+82', flag: '🇰🇷', name: 'South Korea', format: [2, 4, 4], min: 9, max: 11, stripZero: true },
-        { code: '1',  dial: '+1',  flag: '🇺🇸', name: 'USA / CA', format: [3, 3, 4], min: 10, max: 10, stripZero: false },
-        { code: '44', dial: '+44', flag: '🇬🇧', name: 'UK', format: [4, 3, 4], min: 10, max: 11, stripZero: true },
-        { code: '61', dial: '+61', flag: '🇦🇺', name: 'Australia', format: [3, 3, 3], min: 9, max: 9, stripZero: true },
-        { code: '971', dial: '+971', flag: '🇦🇪', name: 'UAE', format: [2, 3, 4], min: 9, max: 9, stripZero: true },
-        { code: '966', dial: '+966', flag: '🇸🇦', name: 'Saudi Arabia', format: [2, 3, 4], min: 9, max: 9, stripZero: true }
+        { code: '62', dial: '+62', flag: '🇮🇩', iso: 'ID', name: 'Indonesia', format: [3, 4, 4], min: 9, max: 13, stripZero: true },
+        { code: '60', dial: '+60', flag: '🇲🇾', iso: 'MY', name: 'Malaysia', format: [2, 3, 4], min: 9, max: 10, stripZero: true },
+        { code: '65', dial: '+65', flag: '🇸🇬', iso: 'SG', name: 'Singapore', format: [4, 4], min: 8, max: 8, stripZero: false },
+        { code: '66', dial: '+66', flag: '🇹🇭', iso: 'TH', name: 'Thailand', format: [2, 3, 4], min: 9, max: 9, stripZero: true },
+        { code: '63', dial: '+63', flag: '🇵🇭', iso: 'PH', name: 'Philippines', format: [3, 3, 4], min: 10, max: 10, stripZero: true },
+        { code: '91', dial: '+91', flag: '🇮🇳', iso: 'IN', name: 'India', format: [5, 5], min: 10, max: 10, stripZero: false },
+        { code: '81', dial: '+81', flag: '🇯🇵', iso: 'JP', name: 'Japan', format: [2, 4, 4], min: 10, max: 11, stripZero: true },
+        { code: '82', dial: '+82', flag: '🇰🇷', iso: 'KR', name: 'South Korea', format: [2, 4, 4], min: 9, max: 11, stripZero: true },
+        { code: '1',  dial: '+1',  flag: '🇺🇸', iso: 'US', name: 'USA / CA', format: [3, 3, 4], min: 10, max: 10, stripZero: false },
+        { code: '44', dial: '+44', flag: '🇬🇧', iso: 'GB', name: 'UK', format: [4, 3, 4], min: 10, max: 11, stripZero: true },
+        { code: '61', dial: '+61', flag: '🇦🇺', iso: 'AU', name: 'Australia', format: [3, 3, 3], min: 9, max: 9, stripZero: true },
+        { code: '971', dial: '+971', flag: '🇦🇪', iso: 'AE', name: 'UAE', format: [2, 3, 4], min: 9, max: 9, stripZero: true },
+        { code: '966', dial: '+966', flag: '🇸🇦', iso: 'SA', name: 'Saudi Arabia', format: [2, 3, 4], min: 9, max: 9, stripZero: true }
     ];
 
     class VLCPhoneInput {
@@ -58,7 +58,7 @@
                 ? 'phone-input-wrapper flex items-center border border-border bg-background rounded-lg overflow-hidden transition focus-within:ring-1 focus-within:ring-[#C41E24]'
                 : 'phone-input-wrapper flex items-stretch border border-slate-300 bg-white rounded-full overflow-hidden transition focus-within:ring-2 focus-within:ring-[#C41E24] focus-within:border-transparent';
 
-            // Select Country Dropdown (Google style: full click area, generous padding, clean flag + dial)
+            // Select Country Dropdown (Compact width so phone placeholder has ample room)
             const selectContainer = document.createElement('div');
             selectContainer.className = isCms
                 ? 'phone-select-wrap relative shrink-0 border-r border-border bg-muted/40 hover:bg-muted/70 transition-colors flex items-center'
@@ -67,19 +67,22 @@
             this.selectEl = document.createElement('select');
             this.selectEl.className = isCms
                 ? 'w-full h-full appearance-none bg-transparent text-xs font-semibold text-foreground cursor-pointer focus:outline-none pl-3 pr-7 py-2.5 z-10'
-                : 'w-full h-full appearance-none bg-transparent text-xs sm:text-sm font-semibold text-slate-700 cursor-pointer focus:outline-none pl-4 pr-8 py-3.5 z-10';
+                : 'w-full h-full appearance-none bg-transparent text-xs lg:text-sm font-semibold text-slate-700 cursor-pointer focus:outline-none pl-3 pr-7 py-2.5 z-10';
             this.selectEl.setAttribute('aria-label', 'Pilih Negara / Kode Telepon');
 
+            this.optionsElements = [];
             VLC_PHONE_COUNTRIES.forEach((c) => {
                 const opt = document.createElement('option');
                 opt.value = c.code;
-                opt.textContent = `${c.flag} ${c.dial} (${c.name})`;
+                opt.textContent = `${c.flag} ${c.dial} (${c.iso})`;
+                opt.title = `${c.name} (${c.dial})`;
                 this.selectEl.appendChild(opt);
+                this.optionsElements.push({ el: opt, country: c });
             });
 
             // Chevron icon
             const chevron = document.createElement('div');
-            chevron.className = 'absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-muted-foreground flex items-center justify-center';
+            chevron.className = 'absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-muted-foreground flex items-center justify-center';
             chevron.innerHTML = `<svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>`;
 
             selectContainer.appendChild(this.selectEl);
@@ -92,7 +95,7 @@
             this.inputEl.placeholder = this.placeholder;
             this.inputEl.className = isCms
                 ? 'phone-digit-input flex-1 px-3 py-1.5 text-xs bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none'
-                : 'phone-digit-input flex-1 px-4 py-3 text-sm bg-transparent text-slate-800 placeholder:text-slate-400 focus:outline-none';
+                : 'phone-digit-input flex-1 min-w-0 px-3 py-2 text-xs lg:text-sm bg-transparent text-slate-800 placeholder:text-slate-400 focus:outline-none';
 
             // Hidden Input (Holds Pure E.164 Digits, e.g. 6281212787989)
             this.hiddenInput = document.createElement('input');

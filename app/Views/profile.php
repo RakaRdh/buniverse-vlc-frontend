@@ -182,7 +182,7 @@
                                  data-name="phone" 
                                  data-value="<?= esc($profile['phone'] ?? '') ?>"
                                  data-required="true"
-                                 data-placeholder="812-1278-7989"></div>
+                                 data-placeholder="812-3456-7890"></div>
                         </div>
 
                         <div>
@@ -211,5 +211,5 @@
     </div>
 </section>
 
-<script src="/js/phoneInput.js"></script>
+<script src="/js/phoneInput.js?v=<?= time() ?>"></script>
 <?= $this->endSection(); ?>
