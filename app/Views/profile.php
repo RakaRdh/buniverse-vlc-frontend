@@ -175,12 +175,14 @@
                         </div>
 
                         <div>
-                            <label for="phone" class="block text-xs font-bold text-slate-700 mb-1.5">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">
                                 Nomor WhatsApp / Telepon <span class="text-red-500">*</span>
                             </label>
-                            <input type="tel" id="phone" name="phone" value="<?= esc($profile['phone'] ?? '') ?>" required
-                                   class="w-full px-4 py-2.5 text-xs lg:text-sm rounded-full border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-[#C41E24] text-slate-800 transition"
-                                   placeholder="081234567890">
+                            <div id="profile_phone_container" data-phone-input 
+                                 data-name="phone" 
+                                 data-value="<?= esc($profile['phone'] ?? '') ?>"
+                                 data-required="true"
+                                 data-placeholder="812-1278-7989"></div>
                         </div>
 
                         <div>
@@ -209,4 +211,5 @@
     </div>
 </section>
 
+<script src="/js/phoneInput.js"></script>
 <?= $this->endSection(); ?>

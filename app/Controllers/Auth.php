@@ -96,6 +96,9 @@ class Auth extends BaseController
             $redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
 
             $memberPhone = trim($profileData['phone'] ?? '');
+            if (!empty($memberPhone)) {
+                $memberPhone = \App\Helpers\PhoneHelper::normalize($memberPhone) ?: $memberPhone;
+            }
 
             if (empty($memberPhone)) {
                 return redirect()->to($redirectUrl)->with('error', 'Silakan lengkapi Nomor WhatsApp / Telepon Anda terlebih dahulu untuk menyelesaikan pendaftaran kelas.');
@@ -126,6 +129,16 @@ class Auth extends BaseController
         // Validations
         if (empty($fullname) || empty($email) || empty($phone) || empty($password)) {
             return redirect()->back()->withInput()->with('error', 'Semua kolom bertanda bintang (*) wajib diisi.');
+        }
+
+        $phone = \App\Helpers\PhoneHelper::normalize($phone);
+        if ($phone === false) {
+            return redirect()->back()->withInput()->with('error', 'Format nomor telepon tidak valid. Pastikan nomor yang dimasukkan benar.');
+        }
+
+        $phoneValidation = \App\Helpers\PhoneHelper::validate($phone);
+        if (!$phoneValidation['valid']) {
+            return redirect()->back()->withInput()->with('error', $phoneValidation['message']);
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

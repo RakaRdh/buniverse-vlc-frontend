@@ -122,10 +122,12 @@
             </div>
 
             <div>
-                <label for="reg_phone" class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp* :</label>
-                <input type="text" id="reg_phone" name="phone" value="<?= esc(old('phone') ?? '') ?>" required
-                       placeholder="Isi No Telp anda"
-                       class="w-full rounded-full border border-slate-300 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">No Telp / WhatsApp* :</label>
+                <div id="reg_phone_container" data-phone-input 
+                     data-name="phone" 
+                     data-value="<?= esc(old('phone') ?? '') ?>"
+                     data-required="true"
+                     data-placeholder="812-1278-7989"></div>
             </div>
 
             <div>
@@ -394,4 +396,5 @@
     });
 </script>
 
+<script src="/js/phoneInput.js"></script>
 <?= $this->endSection(); ?>

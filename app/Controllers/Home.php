@@ -179,6 +179,13 @@ class Home extends BaseController
 		$redirectUrl = ($program && !empty($program['slug'])) ? '/programs/detail/' . $program['slug'] : '/programs/programs_detail?id=' . $programId;
 
 		$postedPhone = trim($this->request->getPost('phone') ?? '');
+		if (!empty($postedPhone)) {
+			$postedPhone = \App\Helpers\PhoneHelper::normalize($postedPhone) ?: $postedPhone;
+			$phoneVal = \App\Helpers\PhoneHelper::validate($postedPhone);
+			if (!$phoneVal['valid']) {
+				return redirect()->to($redirectUrl)->withInput()->with('error', $phoneVal['message']);
+			}
+		}
 
 		// Check if already banned
 		$existingEnrollments = $this->api->getMemberEnrollments($memberId);
@@ -196,7 +203,10 @@ class Home extends BaseController
 		$response = $this->api->enroll($memberId, $programId, $postedPhone);
 
 		if (!empty($response['success'])) {
-			return redirect()->to($redirectUrl)->with('success', 'Pendaftaran kelas berhasil dikirimkan! Status Anda saat ini menunggu verifikasi admin (estimasi 1-3 hari kerja).');
+			$successMsg = !empty($response['message']) 
+				? $response['message'] 
+				: 'Pendaftaran kelas berhasil dikirimkan! Status Anda saat ini menunggu verifikasi admin (estimasi 1-3 hari kerja).';
+			return redirect()->to($redirectUrl)->with('success', $successMsg);
 		}
 
 		return redirect()->to($redirectUrl)->withInput()->with('error', $response['message'] ?? 'Gagal mendaftar kelas.');

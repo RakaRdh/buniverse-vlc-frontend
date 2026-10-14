@@ -176,8 +176,26 @@
                 </div>
             <?php endif; ?>
         <?php else: ?>
+            <?php 
+                $isExpired = (!empty($program['end_date']) && strtotime($program['end_date']) < strtotime('today'));
+            ?>
             <div class="w-full my-8 p-6 md:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <?php if (!empty($program['is_full'])): ?>
+                <?php if ($isExpired): ?>
+                    <div class="text-center py-6">
+                        <div class="inline-flex size-14 rounded-full bg-amber-100 text-amber-700 items-center justify-center mb-3">
+                            <i data-lucide="calendar-x" class="size-7"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-amber-950 mb-1">Pendaftaran Telah Ditutup</h3>
+                        <p class="text-xs sm:text-sm text-amber-900/90 max-w-md mx-auto leading-relaxed">
+                            Periode pelaksanaan kelas ini telah berakhir pada <strong><?= date('d M Y', strtotime($program['end_date'])) ?></strong>. Silakan pilih kelas atau topik pelatihan lainnya.
+                        </p>
+                        <div class="mt-5">
+                            <a href="/#courses" class="inline-block bg-[#C41E24] hover:bg-[#A8151A] text-white text-xs font-bold py-2.5 px-8 rounded-full shadow-sm transition">
+                                Lihat Kelas Lainnya &rarr;
+                            </a>
+                        </div>
+                    </div>
+                <?php elseif (!empty($program['is_full'])): ?>
                     <div class="text-center py-6">
                         <div class="inline-flex size-14 rounded-full bg-rose-100 text-rose-600 items-center justify-center mb-3">
                             <i data-lucide="users" class="size-7"></i>
@@ -219,11 +237,12 @@
                         </div>
 
                         <div>
-                            <label for="enroll_phone" class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
-                            <input type="text" id="enroll_phone" name="phone" required
-                                   value="<?= esc(old('phone') ?? '') ?>"
-                                   placeholder="Contoh: 081234567890"
-                                   class="w-full rounded-full border border-slate-300 px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E24] focus:border-transparent transition">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon * :</label>
+                            <div id="enroll_phone_container" data-phone-input 
+                                 data-name="phone" 
+                                 data-value="<?= esc(old('phone') ?? '') ?>"
+                                 data-required="true"
+                                 data-placeholder="812-1278-7989"></div>
                         </div>
 
                         <div class="pt-4 text-center">
@@ -249,8 +268,21 @@
         <?php endif; ?>
     <?php elseif (!empty($program)): ?>
         <!-- State: User belum login - tampilkan CTA button dan notes -->
+        <?php 
+            $isExpiredAnon = (!empty($program['end_date']) && strtotime($program['end_date']) < strtotime('today'));
+        ?>
         <div class="w-full my-8 p-6 md:p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <?php if (!empty($program['is_full'])): ?>
+            <?php if ($isExpiredAnon): ?>
+                <div class="flex flex-col items-center justify-center">
+                    <button type="button" disabled
+                            class="bg-gray-200 text-gray-500 text-base font-bold py-3.5 px-14 rounded-full shadow-none cursor-not-allowed select-none opacity-80">
+                        Pendaftaran Ditutup
+                    </button>
+                    <p class="text-xs text-amber-600 mt-3.5 font-medium">
+                        Periode kelas ini telah berakhir pada <?= date('d M Y', strtotime($program['end_date'])) ?>.*
+                    </p>
+                </div>
+            <?php elseif (!empty($program['is_full'])): ?>
                 <div class="flex flex-col items-center justify-center">
                     <button type="button" disabled
                             class="bg-gray-300 text-gray-500 text-base font-bold py-3.5 px-14 rounded-full shadow-none cursor-not-allowed select-none opacity-80">
@@ -301,4 +333,5 @@
 </script>
 
 
+<script src="/js/phoneInput.js"></script>
 <?= $this->endSection(); ?>
