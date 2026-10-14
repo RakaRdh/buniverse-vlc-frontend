@@ -204,6 +204,9 @@
 
         if (!loginContainer || !registerContainer) return;
 
+        // Pertahankan query params yang ada (misal ?program_id=...&redirect=...)
+        const currentSearch = window.location.search || '';
+
         if (tab === 'login') {
             loginContainer.classList.remove('hidden');
             loginContainer.classList.add('block');
@@ -212,6 +215,9 @@
 
             btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
             btnRegister.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
+
+            // Update URL browser jadi /login tanpa reload
+            window.history.replaceState(null, '', '/login' + currentSearch);
         } else {
             registerContainer.classList.remove('hidden');
             registerContainer.classList.add('block');
@@ -220,6 +226,9 @@
 
             btnRegister.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-[#C41E24] border-b-2 border-[#C41E24] -mb-px";
             btnLogin.className = "flex-1 py-3 text-center text-sm font-semibold transition-all cursor-pointer text-slate-400 hover:text-slate-600";
+
+            // Update URL browser jadi /register tanpa reload
+            window.history.replaceState(null, '', '/register' + currentSearch);
         }
     }
 

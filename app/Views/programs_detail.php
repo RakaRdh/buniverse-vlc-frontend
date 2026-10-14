@@ -294,12 +294,15 @@
                 </div>
             <?php else: ?>
                 <div class="flex flex-col items-center justify-center">
-                    <a href="/login?program_id=<?= esc($program['id'] ?? '') ?>"
+                    <?php 
+                        $programParam = !empty($program['slug']) ? $program['slug'] : ($program['id'] ?? '');
+                    ?>
+                    <a href="/register?program=<?= esc($programParam) ?>"
                        class="inline-block bg-[#FF8D28] hover:bg-[#e07212] text-white text-base font-bold py-3.5 px-14 rounded-full shadow-md hover:shadow-lg transition transform active:scale-95">
                         Daftar Sekarang
                     </a>
                     <p class="text-xs text-slate-500 mt-3.5 font-medium">
-                        Silahkan login menggunakan akun Datasatu, atau buat akun baru sekarang!*
+                        Silahkan buat akun baru atau login menggunakan akun Datasatu Anda!*
                     </p>
                 </div>
             <?php endif; ?>

@@ -13,22 +13,31 @@ class Auth extends BaseController
         $this->api = new ApiService();
     }
 
+    public function index()
+    {
+        $tab = $this->request->getGet('tab');
+        if ($tab === 'register') {
+            return $this->register();
+        }
+        return $this->login();
+    }
+
     public function login()
     {
         if (session('is_logged_in')) {
             return redirect()->to('/');
         }
 
-        $programId = $this->request->getGet('program_id');
+        $programParam = $this->request->getGet('program') ?: $this->request->getGet('program_id');
         $program = null;
-        if (!empty($programId)) {
-            $program = $this->api->getProgramDetail($programId);
+        if (!empty($programParam)) {
+            $program = $this->api->getProgramDetail($programParam);
         }
 
         $data = [
             'active_tab' => 'login',
             'redirect'   => $this->request->getGet('redirect') ?? '',
-            'program_id' => $programId ?? '',
+            'program_id' => $program['id'] ?? $programParam ?? '',
             'program'    => $program,
         ];
 
@@ -41,16 +50,16 @@ class Auth extends BaseController
             return redirect()->to('/');
         }
 
-        $programId = $this->request->getGet('program_id');
+        $programParam = $this->request->getGet('program') ?: $this->request->getGet('program_id');
         $program = null;
-        if (!empty($programId)) {
-            $program = $this->api->getProgramDetail($programId);
+        if (!empty($programParam)) {
+            $program = $this->api->getProgramDetail($programParam);
         }
 
         $data = [
             'active_tab' => 'register',
             'redirect'   => $this->request->getGet('redirect') ?? '',
-            'program_id' => $programId ?? '',
+            'program_id' => $program['id'] ?? $programParam ?? '',
             'program'    => $program,
         ];
 
@@ -173,7 +182,15 @@ class Auth extends BaseController
 
         $successMsg = 'Pendaftaran akun berhasil! Tautan verifikasi telah dikirimkan ke email (' . $email . '). Silakan periksa inbox email Anda untuk mengaktifkan akun sebelum masuk.';
 
-        $loginUrl = '/login' . (!empty($programId) ? '?program_id=' . $programId : '');
+        $loginParams = [];
+        if (!empty($programId)) {
+            $progObj = $this->api->getProgramDetail($programId);
+            $loginParams['program'] = (!empty($progObj['slug'])) ? $progObj['slug'] : $programId;
+        } elseif (!empty($redirect)) {
+            $loginParams['redirect'] = $redirect;
+        }
+
+        $loginUrl = '/login' . (!empty($loginParams) ? '?' . http_build_query($loginParams) : '');
         return redirect()->to($loginUrl)->with('success', $successMsg)->with('unverified_email', $email);
     }
 

@@ -31,6 +31,7 @@ $routes->get('/programs/detail/(:any)', 'Home::programsdetail/$1');
 $routes->match(['get', 'post'], 'programs/enroll/(:num)', 'Home::enroll/$1');
 
 // Auth & Member
+$routes->get('auth', 'Auth::index');
 $routes->get('login', 'Auth::login');
 $routes->get('register', 'Auth::register');
 $routes->post('auth/login', 'Auth::attemptLogin');
